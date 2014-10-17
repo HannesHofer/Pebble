@@ -87,7 +87,7 @@ static void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)seconds_right);
   
   // seconds_bottom
-  seconds_bottom = layer_create(GRect(1, 160, 144, 8));
+  seconds_bottom = layer_create(GRect(0, 160, 144, 8));
   layer_add_child(window_get_root_layer(s_window), (Layer *)seconds_bottom);
   
   // debuglayer
@@ -155,10 +155,8 @@ void handle_tick(struct tm *tick_time, TimeUnits units_changed)
       setDate(tick_time);
 }
 
-static struct tm *current_time;
 void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
 {
-  current_time = tick_time;
   if (tick_time->tm_sec > 8 && tick_time->tm_sec < 24)
     layer_mark_dirty(seconds_right);
   else if (tick_time->tm_sec > 22 && tick_time->tm_sec < 38)
@@ -185,19 +183,61 @@ static uint8_t seconds_startdraw[] = {66, 75, 84, 93, 102, 111, 121, 130, 140, 1
                                       132, 121, 110, 99, 88, 77, 66, 55, 44, 33,
                                       22, 11, 1, 0, 11, 20, 30, 39, 48, 57};
 
+// {{-1, 8}, {2, 8}, {7, 3}, {4, 0}, {-1, 5}, {-1, 8}}
+static GPath *edge_path = NULL;
+static const GPathInfo BOLT_PATH_INFO = {
+  .num_points = 6,
+  .points = (GPoint []) {{-1, 8}, {2, 8}, {7, 3}, {4, 0}, {-1, 5}, {-1, 8}}
+};
+
+void draw_edge(GContext* ctx, uint8_t edgenr, GColor mydrawcolor) {
+  edge_path = gpath_create(&BOLT_PATH_INFO);
+  graphics_context_set_stroke_color(ctx, mydrawcolor);
+  graphics_context_set_fill_color(ctx, mydrawcolor);
+
+  if (edgenr == 1) {
+    gpath_move_to(edge_path, GPoint(143, 7));
+    gpath_rotate_to(edge_path, TRIG_MAX_ANGLE * 180 / 360);
+
+  }else if (edgenr == 2){
+    gpath_move_to(edge_path, GPoint(136, 7));
+    gpath_rotate_to(edge_path, TRIG_MAX_ANGLE * 270 / 360);
+  }
+  else if (edgenr == 4){
+    gpath_move_to(edge_path, GPoint(7, 0));
+    gpath_rotate_to(edge_path, TRIG_MAX_ANGLE * 90 / 360);
+  }
+  gpath_draw_filled(ctx, edge_path);
+}
+
 void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor, bool vertical) {
   GRect drawrect;
   graphics_context_set_fill_color(ctx, mydrawcolor);
   for (uint8_t i=from; i <= to; ++i) {
+    //if ((i == to || i == from) && (i == 8 || i == 23 || i == 38 || i == 53 )) {
+    if (0) {
+      if (i == 8)
+        draw_edge(ctx, 1, mydrawcolor);
+      else if (i == 23)
+        draw_edge(ctx, 2, mydrawcolor);
+      else if (i == 38)
+        draw_edge(ctx, 3, mydrawcolor);
+      else if (i == 53)
+        draw_edge(ctx, 4, mydrawcolor);
+    } else {
       if (vertical)
         drawrect = GRect(0, seconds_startdraw[i], 8, 3);
       else
         drawrect = GRect(seconds_startdraw[i], 0, 3, 8);
       graphics_fill_rect(ctx, drawrect, 0, GCornerNone);   
     } 
+  }
 }
 
 void update_secondLayers(Layer *l, GContext* ctx) {
+  time_t now = time(NULL);
+  struct tm *current_time;
+  current_time = localtime(&now);
   if ( l == seconds_top) {
     if ( current_time->tm_sec < 8) {
       draw_rect(ctx, 53, 59, not_drawcolor(), false);
@@ -267,8 +307,13 @@ void update_bat(Layer *l, GContext* ctx) {
 
 
 static void init_data() {
+  time_t now = time(NULL);
+  struct tm *current_time;
+  current_time = localtime(&now);
+  
   // create battery layer
   layer_set_update_proc(batt_level, (LayerUpdateProc)update_bat);
+  
   layer_set_update_proc(seconds_top, (LayerUpdateProc)update_secondLayers);
   layer_set_update_proc(seconds_bottom, (LayerUpdateProc)update_secondLayers);
   layer_set_update_proc(seconds_left, (LayerUpdateProc)update_secondLayers);
@@ -308,8 +353,6 @@ void show_mainview(void) {
 }
 
 int main(void) {
-  time_t now = time(NULL);
-  current_time = localtime(&now);
   show_mainview();
   init_data();
   app_event_loop();
