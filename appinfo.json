@@ -1,0 +1,40 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "hannes.hofer+pebble@gmail.com",
+    "longName": "aurora",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/nobluetooth.png",
+                "name": "nobluetooth",
+                "type": "png"
+            },
+            {
+                "file": "images/pebble_black_rect2.png",
+                "name": "rect_background",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/bluetooth.png",
+                "name": "bluetooth",
+                "type": "png"
+            },
+            {
+                "file": "images/pswecyl.png",
+                "name": "BAT_LOW",
+                "type": "png"
+            }
+        ]
+    },
+    "shortName": "aurora",
+    "uuid": "69c89a13-c89e-4722-a5ab-7026e4bf9bdc",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
