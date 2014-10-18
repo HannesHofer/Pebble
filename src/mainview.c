@@ -94,7 +94,6 @@ static void initialise_ui(void) {
   debuglayer = text_layer_create(GRect(26, 138, 100, 20));
   text_layer_set_background_color(debuglayer, GColorClear);
   text_layer_set_text_color(debuglayer, GColorWhite);
-  text_layer_set_text(debuglayer, "");
   text_layer_set_text_alignment(debuglayer, GTextAlignmentCenter);
   text_layer_set_font(debuglayer, s_res_gothic_14);
   layer_add_child(window_get_root_layer(s_window), (Layer *)debuglayer);
@@ -125,14 +124,13 @@ static void destroy_ui(void) {
 // END AUTO-GENERATED UI CODE
 
 // custom globals
-static char* days[] = {"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"};
+static char* days[] = {"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
 static uint8_t bat_level = 0;
 static GBitmap *s_res_nobluetooth;
 
 static void setDate(struct tm *current_time) {
-  static char DateBuffer[] = "00/00/0000";
-  int day = current_time->tm_wday;
-  text_layer_set_text(Day, days[day]);
+  static char DateBuffer[] = "00/00/0000"; 
+  text_layer_set_text(Day, days[current_time->tm_wday]);
   strftime(DateBuffer, sizeof("00/00/0000"), "%d/%m/%Y", current_time);
   text_layer_set_text(actDate, DateBuffer);
 }
@@ -184,46 +182,31 @@ static uint8_t seconds_startdraw[] = {66, 75, 84, 93, 102, 111, 121, 130, 140, 1
                                       22, 11, 1, 0, 11, 20, 30, 39, 48, 57};
 
 // {{-1, 8}, {2, 8}, {7, 3}, {4, 0}, {-1, 5}, {-1, 8}}
-static GPath *edge_path = NULL;
+static GPath *edge_path[4];
 static const GPathInfo BOLT_PATH_INFO = {
   .num_points = 6,
   .points = (GPoint []) {{-1, 8}, {2, 8}, {7, 3}, {4, 0}, {-1, 5}, {-1, 8}}
 };
 
 void draw_edge(GContext* ctx, uint8_t edgenr, GColor mydrawcolor) {
-  edge_path = gpath_create(&BOLT_PATH_INFO);
-  graphics_context_set_stroke_color(ctx, mydrawcolor);
   graphics_context_set_fill_color(ctx, mydrawcolor);
-
-  if (edgenr == 1) {
-    gpath_move_to(edge_path, GPoint(143, 7));
-    gpath_rotate_to(edge_path, TRIG_MAX_ANGLE * 180 / 360);
-
-  }else if (edgenr == 2){
-    gpath_move_to(edge_path, GPoint(136, 7));
-    gpath_rotate_to(edge_path, TRIG_MAX_ANGLE * 270 / 360);
-  }
-  else if (edgenr == 4){
-    gpath_move_to(edge_path, GPoint(7, 0));
-    gpath_rotate_to(edge_path, TRIG_MAX_ANGLE * 90 / 360);
-  }
-  gpath_draw_filled(ctx, edge_path);
+  gpath_draw_filled(ctx, edge_path[edgenr]);
 }
 
 void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor, bool vertical) {
   GRect drawrect;
   graphics_context_set_fill_color(ctx, mydrawcolor);
   for (uint8_t i=from; i <= to; ++i) {
-    //if ((i == to || i == from) && (i == 8 || i == 23 || i == 38 || i == 53 )) {
-    if (0) {
+    if ((i == to || i == from) && (i == 8 || i == 23 || i == 38 || i == 53 )) {
+    //if (0) {
       if (i == 8)
-        draw_edge(ctx, 1, mydrawcolor);
+        draw_edge(ctx, 0, mydrawcolor);
       else if (i == 23)
-        draw_edge(ctx, 2, mydrawcolor);
+        draw_edge(ctx, 1, mydrawcolor);
       else if (i == 38)
-        draw_edge(ctx, 3, mydrawcolor);
+        draw_edge(ctx, 2, mydrawcolor);
       else if (i == 53)
-        draw_edge(ctx, 4, mydrawcolor);
+        draw_edge(ctx, 3, mydrawcolor);
     } else {
       if (vertical)
         drawrect = GRect(0, seconds_startdraw[i], 8, 3);
@@ -236,7 +219,7 @@ void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor, bool
 
 void update_secondLayers(Layer *l, GContext* ctx) {
   time_t now = time(NULL);
-  struct tm *current_time;
+  static struct tm *current_time;
   current_time = localtime(&now);
   if ( l == seconds_top) {
     if ( current_time->tm_sec < 8) {
@@ -311,16 +294,26 @@ static void init_data() {
   struct tm *current_time;
   current_time = localtime(&now);
   
+  // create edge path  
+  for (int i=0;i<4;i++)
+    edge_path[i] = gpath_create(&BOLT_PATH_INFO);
+  
+  gpath_move_to(edge_path[0], GPoint(143, 7));
+  gpath_rotate_to(edge_path[0], TRIG_MAX_ANGLE * 180 / 360);
+  gpath_move_to(edge_path[1], GPoint(136, 7));
+  gpath_rotate_to(edge_path[1], TRIG_MAX_ANGLE * 270 / 360);
+  gpath_move_to(edge_path[3], GPoint(7, 0));
+  gpath_rotate_to(edge_path[3], TRIG_MAX_ANGLE * 90 / 360);
+  
   // create battery layer
   layer_set_update_proc(batt_level, (LayerUpdateProc)update_bat);
-  
   layer_set_update_proc(seconds_top, (LayerUpdateProc)update_secondLayers);
   layer_set_update_proc(seconds_bottom, (LayerUpdateProc)update_secondLayers);
   layer_set_update_proc(seconds_left, (LayerUpdateProc)update_secondLayers);
   layer_set_update_proc(seconds_right, (LayerUpdateProc)update_secondLayers);
   
   // first refresh
-  handle_tick(current_time, MINUTE_UNIT);
+  handle_tick(current_time, MINUTE_UNIT);  
   setDate(current_time);
   handle_bluetooth(bluetooth_connection_service_peek());
   handle_battery(battery_state_service_peek());
