@@ -7,6 +7,8 @@ static GBitmap *s_res_bluetooth;
 static GBitmap *s_res_bat_low;
 static GFont s_res_bitham_42_medium_numbers;
 static GFont s_res_gothic_18;
+static GBitmap *s_res_sunrise;
+static GBitmap *s_res_sunset;
 static GFont s_res_gothic_14;
 static BitmapLayer *background;
 static BitmapLayer *bluetooth;
@@ -18,8 +20,11 @@ static Layer *batt_level;
 static Layer *seconds_top;
 static Layer *seconds_right;
 static Layer *seconds_bottom;
-static TextLayer *debuglayer;
 static Layer *seconds_left;
+static BitmapLayer *sunrise;
+static BitmapLayer *sunset;
+static TextLayer *sunrisetime;
+static TextLayer *sunsettime;
 
 static void initialise_ui(void) {
   s_window = window_create();
@@ -31,6 +36,8 @@ static void initialise_ui(void) {
   s_res_bat_low = gbitmap_create_with_resource(RESOURCE_ID_BAT_LOW);
   s_res_bitham_42_medium_numbers = fonts_get_system_font(FONT_KEY_BITHAM_42_MEDIUM_NUMBERS);
   s_res_gothic_18 = fonts_get_system_font(FONT_KEY_GOTHIC_18);
+  s_res_sunrise = gbitmap_create_with_resource(RESOURCE_ID_sunrise);
+  s_res_sunset = gbitmap_create_with_resource(RESOURCE_ID_sunset);
   s_res_gothic_14 = fonts_get_system_font(FONT_KEY_GOTHIC_14);
   // background
   background = bitmap_layer_create(GRect(0, 0, 144, 168));
@@ -48,7 +55,7 @@ static void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)Battery);
   
   // currenttime
-  currenttime = text_layer_create(GRect(0, 50, 144, 53));
+  currenttime = text_layer_create(GRect(0, 49, 144, 53));
   text_layer_set_background_color(currenttime, GColorClear);
   text_layer_set_text_color(currenttime, GColorWhite);
   text_layer_set_text(currenttime, "00:00");
@@ -90,17 +97,35 @@ static void initialise_ui(void) {
   seconds_bottom = layer_create(GRect(0, 160, 144, 8));
   layer_add_child(window_get_root_layer(s_window), (Layer *)seconds_bottom);
   
-  // debuglayer
-  debuglayer = text_layer_create(GRect(26, 138, 100, 20));
-  text_layer_set_background_color(debuglayer, GColorClear);
-  text_layer_set_text_color(debuglayer, GColorWhite);
-  text_layer_set_text_alignment(debuglayer, GTextAlignmentCenter);
-  text_layer_set_font(debuglayer, s_res_gothic_14);
-  layer_add_child(window_get_root_layer(s_window), (Layer *)debuglayer);
-  
   // seconds_left
   seconds_left = layer_create(GRect(0, 11, 9, 148));
   layer_add_child(window_get_root_layer(s_window), (Layer *)seconds_left);
+  
+  // sunrise
+  sunrise = bitmap_layer_create(GRect(21, 136, 8, 13));
+  bitmap_layer_set_bitmap(sunrise, s_res_sunrise);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)sunrise);
+  
+  // sunset
+  sunset = bitmap_layer_create(GRect(87, 135, 8, 13));
+  bitmap_layer_set_bitmap(sunset, s_res_sunset);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)sunset);
+  
+  // sunrisetime
+  sunrisetime = text_layer_create(GRect(32, 133, 31, 16));
+  text_layer_set_background_color(sunrisetime, GColorClear);
+  text_layer_set_text_color(sunrisetime, GColorWhite);
+  text_layer_set_text(sunrisetime, "00:00");
+  text_layer_set_font(sunrisetime, s_res_gothic_14);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)sunrisetime);
+  
+  // sunsettime
+  sunsettime = text_layer_create(GRect(98, 132, 29, 17));
+  text_layer_set_background_color(sunsettime, GColorClear);
+  text_layer_set_text_color(sunsettime, GColorWhite);
+  text_layer_set_text(sunsettime, "00:00");
+  text_layer_set_font(sunsettime, s_res_gothic_14);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)sunsettime);
 }
 
 static void destroy_ui(void) {
@@ -115,11 +140,16 @@ static void destroy_ui(void) {
   layer_destroy(seconds_top);
   layer_destroy(seconds_right);
   layer_destroy(seconds_bottom);
-  text_layer_destroy(debuglayer);
   layer_destroy(seconds_left);
+  bitmap_layer_destroy(sunrise);
+  bitmap_layer_destroy(sunset);
+  text_layer_destroy(sunrisetime);
+  text_layer_destroy(sunsettime);
   gbitmap_destroy(s_res_rect_background_white);
   gbitmap_destroy(s_res_bluetooth);
   gbitmap_destroy(s_res_bat_low);
+  gbitmap_destroy(s_res_sunrise);
+  gbitmap_destroy(s_res_sunset);
 }
 // END AUTO-GENERATED UI CODE
 

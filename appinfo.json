@@ -9,8 +9,23 @@
     "resources": {
         "media": [
             {
-                "file": "images/nobluetooth.png",
-                "name": "nobluetooth",
+                "file": "images/sunset.png",
+                "name": "sunset",
+                "type": "png"
+            },
+            {
+                "file": "images/sunrise.png",
+                "name": "sunrise",
+                "type": "png"
+            },
+            {
+                "file": "images/pswecyl.png",
+                "name": "BAT_LOW",
+                "type": "png"
+            },
+            {
+                "file": "images/bluetooth.png",
+                "name": "bluetooth",
                 "type": "png"
             },
             {
@@ -19,13 +34,8 @@
                 "type": "png-trans"
             },
             {
-                "file": "images/bluetooth.png",
-                "name": "bluetooth",
-                "type": "png"
-            },
-            {
-                "file": "images/pswecyl.png",
-                "name": "BAT_LOW",
+                "file": "images/nobluetooth.png",
+                "name": "nobluetooth",
                 "type": "png"
             }
         ]
