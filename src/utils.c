@@ -1,5 +1,5 @@
 #include "utils.h"
-#include "my_math.h"
+#include "simplemath.h"
 
 #define ZENITH_OFFICIAL 90.83333
 #define ZENITH_CIVIL 96.0
@@ -47,11 +47,11 @@ float calcsun(float longitude, float latitude, int sunset, int year, int month, 
   float M = (0.9856 * t) - 3.289;
   
   // sun true longitude
-  float L = M + (1.916 * my_sin(M)) + (0.020 * my_sin(2 * M)) + 282.634;
+  float L = M + (1.916 * simple_sin(M)) + (0.020 * simple_sin(2 * M)) + 282.634;
   L = adjust360(L);
   
   // sun right ascension
-  float RA = my_atan(0.91764 * my_tan(L));
+  float RA = simple_atan(0.91764 * simple_tan(L));
   RA = adjust360(RA);
   
   // right ascension value needs to be in the same quadrant as L
@@ -61,20 +61,20 @@ float calcsun(float longitude, float latitude, int sunset, int year, int month, 
   RA /= 15;
   
   // sun declination
-  float sinDec = 0.39782 * my_sin(L);
-  float cosDec = my_cos(my_asin(sinDec));
+  float sinDec = 0.39782 * simple_sin(L);
+  float cosDec = simple_cos(simple_asin(sinDec));
   
   // sun local hour angle
-  float cosH = (my_cos(ZENITH) - (sinDec * my_sin(latitude))) / (cosDec * my_cos(latitude));
+  float cosH = (simple_cos(ZENITH) - (sinDec * simple_sin(latitude))) / (cosDec * simple_cos(latitude));
   if (cosH > 1 || cosH < -1)
     return -1.0;
   
   // convert into hours
   float H;
   if (sunset)
-    H = (180.0f / M_PI) * my_acos(cosH);
+    H = (180.0f / M_PI) * simple_acos(cosH);
   else
-    H = 360 - ((180.0f / M_PI) * my_cos(cosH));
+    H = 360 - ((180.0f / M_PI) * simple_cos(cosH));
   
   H /= 15;
   
