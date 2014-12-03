@@ -1,5 +1,8 @@
 #pragma once
 #include <pebble.h>
+#define LATITUDE 47.293373
+#define LONGITUDE  11.519552
+#define TIMEZONE  2.0
 
 // custom globals
 static char* days[] = {"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
@@ -21,3 +24,5 @@ static uint8_t seconds_startdraw[] = {66, 75, 84, 93, 102, 111, 121, 130, 140, 1
 static GColor not_drawcolor() {
   return drawcolor == GColorBlack ? GColorWhite : GColorBlack;
 }
+
+float calcsun(float longitude, float latitude, int sunset, int year, int month, int day);

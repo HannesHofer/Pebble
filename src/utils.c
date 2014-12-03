@@ -7,7 +7,6 @@
 #define ZENITH_ASTRONOMICAL 108.0
 
 #define ZENITH ZENITH_CIVIL
-
 // calculate sunset & sunrise 
 // http://williams.best.vwh.net/sunrise_sunset_algorithm.htm
 
@@ -38,6 +37,13 @@ float convertlonghour(float longitude, int sunset, int year, int month, int day)
     diff = 18;
     
   return calcday(year, month, day) + ((diff - lngHour) / 24); 
+}
+
+void Timezone(float* time)
+{
+  *time += TIMEZONE;
+  if (*time > 24) *time -= 24;
+  if (*time < 0) *time += 24;
 }
 
 float calcsun(float longitude, float latitude, int sunset, int year, int month, int day)
@@ -89,5 +95,9 @@ float calcsun(float longitude, float latitude, int sunset, int year, int month, 
   else if (UT > 24)
     UT -= 24;
   
+  Timezone(&UT);
+    
   return UT;
 }
+
+

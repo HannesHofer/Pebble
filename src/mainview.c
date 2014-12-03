@@ -73,7 +73,7 @@ static void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)Day);
   
   // actDate
-  actDate = text_layer_create(GRect(0, 102, 145, 28));
+  actDate = text_layer_create(GRect(0, 102, 144, 28));
   text_layer_set_background_color(actDate, GColorClear);
   text_layer_set_text_color(actDate, GColorWhite);
   text_layer_set_text(actDate, "          ");
@@ -153,11 +153,15 @@ static void destroy_ui(void) {
 }
 // END AUTO-GENERATED UI CODE
 
+static void update_suntime(struct tm *current_time);
+
 static void setDate(struct tm *current_time) {
   static char DateBuffer[] = "00/00/0000"; 
   text_layer_set_text(Day, days[current_time->tm_wday]);
   strftime(DateBuffer, sizeof("00/00/0000"), "%d/%m/%Y", current_time);
   text_layer_set_text(actDate, DateBuffer);
+  
+  update_suntime(current_time);
 }
 
 void handle_tick(struct tm *tick_time, TimeUnits units_changed)
@@ -218,6 +222,22 @@ void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor, bool
       graphics_fill_rect(ctx, drawrect, 0, GCornerNone);   
     } 
   }
+}
+
+static void update_suntime(struct tm *current_time)
+{
+  static char sunrise[] = "00:00";
+  static char sunset[] = "00:00";
+  
+  float temp_suncalc = calcsun(LONGITUDE, LATITUDE, 0, current_time->tm_year, current_time->tm_mon+1, current_time->tm_mday);
+  snprintf(sunrise, sizeof("00:00"),"%02d:%02d", (int)temp_suncalc, (int)(60*(temp_suncalc-((int)(temp_suncalc)))));
+  
+  temp_suncalc = calcsun(LONGITUDE, LATITUDE, 1, current_time->tm_year, current_time->tm_mon+1, current_time->tm_mday);
+  snprintf(sunset, sizeof("00:00"), "%02d:%02d", (int)temp_suncalc, (int)(60*(temp_suncalc-((int)(temp_suncalc)))));
+  
+  text_layer_set_text(sunrisetime, sunrise);
+  text_layer_set_text(sunsettime, sunset);
+  
 }
 
 void update_secondLayers(Layer *l, GContext* ctx) {
