@@ -63,6 +63,7 @@ float asin_core(const float x)
           (7.5000364034134126e-2 * x2 + 1.6666666300567365e-1)) * x2 * x + x; 
 }
 
+
 #define SQRT_MAGIC_F 0x5f3759df 
 // quacke 3 sqrt 
 float simple_sqrt(const float x)
@@ -131,8 +132,16 @@ float simple_tan(const float x)
   return simple_sin(x) / simple_cos(x);
 }
 
-/* atan approximation http://nghiaho.com/?p=997 */
+/* atan approximation http://nghiaho.com/?p=997  
 float simple_atan(const float x)
 {
   return ((M_PI/4) * x) - x * (simple_fabs(x) - 1) * (0.2447 + 0.0663 * simple_fabs(x));
+}*/
+
+float simple_atan(float x)
+{
+  if (x > 0)
+    return (M_PI/2)*(0.596227*x + x*x)/(1 + 2*0.596227*x + x*x);
+  else
+    return -(simple_atan(-x));
 }

@@ -2,7 +2,7 @@
 #include <pebble.h>
 #define LATITUDE 47.293373
 #define LONGITUDE  11.519552
-#define TIMEZONE  2.0
+#define TIMEZONE  1.0
 
 // custom globals
 static char* days[] = {"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
@@ -21,7 +21,7 @@ static uint8_t seconds_startdraw[] = {66, 75, 84, 93, 102, 111, 121, 130, 140, 1
                                       132, 121, 110, 99, 88, 77, 66, 55, 44, 33,
                                       22, 11, 1, 0, 11, 20, 30, 39, 48, 57};
 
-static GColor not_drawcolor() {
+GColor not_drawcolor() {
   return drawcolor == GColorBlack ? GColorWhite : GColorBlack;
 }
 
