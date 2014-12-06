@@ -19,8 +19,12 @@ float adjust360(float value)
   return value;
 }
 
-int calcday(int year, int month, int day)
+int calcday(struct tm *current_time)
 {
+  int year = current_time->tm_year;
+  int month = current_time->tm_mon+1;
+  int day = current_time->tm_mday;
+  
   // calculate day of year
   int N1 = simple_floor(275 * month / 9);
   int N2 = simple_floor((month + 9) / 12);
@@ -28,7 +32,7 @@ int calcday(int year, int month, int day)
   return (N1 - (N2 * N3) + day - 30);
 }
 
-float convertlonghour(float longitude, int sunset, int year, int month, int day)
+float convertlonghour(float longitude, int sunset, struct tm *current_time)
 {
   // convert the longitude to hour value and calculate an approximate time
   float lngHour = longitude / 15;
@@ -36,7 +40,7 @@ float convertlonghour(float longitude, int sunset, int year, int month, int day)
   if (sunset)
     diff = 18;
     
-  return calcday(year, month, day) + ((diff - lngHour) / 24); 
+  return calcday(current_time) + ((diff - lngHour) / 24); 
 }
 
 void Timezone(float* time)
@@ -46,18 +50,21 @@ void Timezone(float* time)
   if (*time < 0) *time += 24;
 }
 
-float calcsun(float longitude, float latitude, int sunset, int year, int month, int day)
+float calcsun(float longitude, float latitude, int sunset, 
+	      struct tm *current_time)
 {
-  float t = convertlonghour(longitude, sunset, year, month, day);
+  float t = convertlonghour(longitude, sunset, current_time);
   // sun anomaly
   float M = (0.9856 * t) - 3.289;
   
   // sun true longitude
-  float L = M + (1.916 * simple_sin((M_PI / 180.0f) * M)) + (0.020 * simple_sin((M_PI / 180.0f) * 2 * M)) + 282.634;
+  float L = M + (1.916 * simple_sin((M_PI / 180.0f) * M)) + 
+            (0.020 * simple_sin((M_PI / 180.0f) * 2 * M)) + 282.634;
   L = adjust360(L);
   
   // sun right ascension
-  float RA = (180.0f / M_PI) * simple_atan(0.91764 * simple_tan((M_PI / 180.0f) * L));
+  float RA = (180.0f / M_PI) * 
+             simple_atan(0.91764 * simple_tan((M_PI / 180.0f) * L));
   RA = adjust360(RA);
   
   // right ascension value needs to be in the same quadrant as L
@@ -70,7 +77,9 @@ float calcsun(float longitude, float latitude, int sunset, int year, int month, 
   float cosDec = simple_cos(simple_asin(sinDec));
   
   // sun local hour angle
-  float cosH = (simple_cos((M_PI / 180.0f) * ZENITH) - (sinDec * simple_sin((M_PI / 180.0f) * latitude))) / (cosDec * simple_cos((M_PI / 180.0f) * latitude));
+  float cosH = (simple_cos((M_PI / 180.0f) * ZENITH) -
+	       (sinDec * simple_sin((M_PI / 180.0f) * latitude))) /
+	       (cosDec * simple_cos((M_PI / 180.0f) * latitude));
   
   if (cosH > 1 || cosH < -1)
     return -1.0;

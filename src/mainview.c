@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "communication.h"
 
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
@@ -192,6 +192,12 @@ void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
   // minute update
   if (tick_time->tm_sec == 0)
     handle_tick(tick_time, MINUTE_UNIT);
+  
+  // forced suncalc update 
+  if (forceSunUpdate){
+    update_suntime(tick_time);
+    forceSunUpdate = 0;
+  }
 
 }
 
@@ -200,7 +206,8 @@ void draw_edge(GContext* ctx, uint8_t edgenr, GColor mydrawcolor) {
   gpath_draw_filled(ctx, edge_path[edgenr]);
 }
 
-void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor, bool vertical) {
+void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor,
+	       bool vertical) {
   GRect drawrect;
   graphics_context_set_fill_color(ctx, mydrawcolor);
   for (uint8_t i=from; i <= to; ++i) {
@@ -224,16 +231,44 @@ void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor, bool
   }
 }
 
+static void get_current_location()
+{
+   bool returnvalue = true;
+   Tuplet tuple = TupletInteger(GETGPSCOORDINATES, 1);
+
+   DictionaryIterator *iterator;
+   AppMessageResult messageres;
+
+   messageres = app_message_outbox_begin(&iterator);
+   if (messageres != APP_MSG_OK || iterator == NULL) {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "app_message_outbox_begin failed");
+      return; 
+   }
+
+
+   DictionaryResult dictresult;
+
+   dict_write_tuplet(iterator, &tuple);
+   
+   unsigned writeret = dict_write_end(iterator);
+   if (writeret == 0)
+    return;
+
+   app_message_outbox_send(); 
+}
+
 static void update_suntime(struct tm *current_time)
 {
   static char sunrise[] = "00:00";
   static char sunset[] = "00:00";
   
-  float temp_suncalc = calcsun(LONGITUDE, LATITUDE, 0, current_time->tm_year, current_time->tm_mon+1, current_time->tm_mday);
-  snprintf(sunrise, sizeof("00:00"),"%02d:%02d", (int)temp_suncalc, (int)(60*(temp_suncalc-((int)(temp_suncalc)))));
+  float temp_suncalc = calcsun(real_longitude, real_latitude, 0, current_time);
+  snprintf(sunrise, sizeof("00:00"),"%02d:%02d",
+	   (int)temp_suncalc, (int)(60*(temp_suncalc-((int)(temp_suncalc)))));
   
-  temp_suncalc = calcsun(LONGITUDE, LATITUDE, 1, current_time->tm_year, current_time->tm_mon+1, current_time->tm_mday);
-  snprintf(sunset, sizeof("00:00"), "%02d:%02d", (int)temp_suncalc, (int)(60*(temp_suncalc-((int)(temp_suncalc)))));
+  temp_suncalc = calcsun(real_longitude, real_latitude, 1, current_time);
+  snprintf(sunset, sizeof("00:00"), "%02d:%02d",
+	   (int)temp_suncalc, (int)(60*(temp_suncalc-((int)(temp_suncalc)))));
   
   text_layer_set_text(sunrisetime, sunrise);
   text_layer_set_text(sunsettime, sunset);
@@ -314,7 +349,7 @@ void update_bat(Layer *l, GContext* ctx) {
 
 static void init_data() {
   time_t now = time(NULL);
-  struct tm *current_time;
+  struct tm *current_time;// KEY top get longitude data from dict 
   current_time = localtime(&now);
   
   // create edge path  
@@ -349,6 +384,12 @@ static void init_data() {
   
   // custom resources
   s_res_nobluetooth = gbitmap_create_with_resource(RESOURCE_ID_nobluetooth); 
+  
+  // init communication
+  app_message_register_inbox_received(inbox_received);
+  app_message_open(app_message_inbox_size_maximum(),
+		   app_message_outbox_size_maximum());
+
 }
 
 static void handle_window_unload(Window* window) {
