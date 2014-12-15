@@ -1,9 +1,9 @@
-#ifndef brizzl
+#pragma once
 #include <pebble.h>
 #define LATITUDE 47.293373
 #define LONGITUDE  11.519552
 #define TIMEZONE  1.0
-#define brizzl
+#define GPS_INVALID 99999
 
 // custom globals
 static char* days[] = {"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
@@ -28,7 +28,6 @@ static GColor not_drawcolor() {
 
 float calcsun(float longitude, float latitude, int sunset, struct tm *current_time);
 
-static float real_latitude = LATITUDE;
-static float real_longitude = LONGITUDE;
-static float forceSunUpdate = 0;
-#endif
+extern float latitude;
+extern float longitude;
+extern int forceSunUpdate;

@@ -115,7 +115,7 @@ static void initialise_ui(void) {
   sunrisetime = text_layer_create(GRect(32, 133, 31, 16));
   text_layer_set_background_color(sunrisetime, GColorClear);
   text_layer_set_text_color(sunrisetime, GColorWhite);
-  text_layer_set_text(sunrisetime, "00:00");
+  text_layer_set_text(sunrisetime, "     ");
   text_layer_set_font(sunrisetime, s_res_gothic_14);
   layer_add_child(window_get_root_layer(s_window), (Layer *)sunrisetime);
   
@@ -123,7 +123,7 @@ static void initialise_ui(void) {
   sunsettime = text_layer_create(GRect(98, 132, 29, 17));
   text_layer_set_background_color(sunsettime, GColorClear);
   text_layer_set_text_color(sunsettime, GColorWhite);
-  text_layer_set_text(sunsettime, "00:00");
+  text_layer_set_text(sunsettime, "     ");
   text_layer_set_font(sunsettime, s_res_gothic_14);
   layer_add_child(window_get_root_layer(s_window), (Layer *)sunsettime);
 }
@@ -153,7 +153,11 @@ static void destroy_ui(void) {
 }
 // END AUTO-GENERATED UI CODE
 
+int forceSunUpdate = 0;
+float latitude = GPS_INVALID;
+float longitude = GPS_INVALID;
 static void update_suntime(struct tm *current_time);
+static void get_current_location();
 
 static void setDate(struct tm *current_time) {
   static char DateBuffer[] = "00/00/0000"; 
@@ -259,14 +263,17 @@ static void get_current_location()
 
 static void update_suntime(struct tm *current_time)
 {
+  if (latitude == GPS_INVALID || longitude == GPS_INVALID)
+    return;
+  
   static char sunrise[] = "00:00";
   static char sunset[] = "00:00";
   
-  float temp_suncalc = calcsun(real_longitude, real_latitude, 0, current_time);
+  float temp_suncalc = calcsun(longitude, latitude, 0, current_time);
   snprintf(sunrise, sizeof("00:00"),"%02d:%02d",
 	   (int)temp_suncalc, (int)(60*(temp_suncalc-((int)(temp_suncalc)))));
   
-  temp_suncalc = calcsun(real_longitude, real_latitude, 1, current_time);
+  temp_suncalc = calcsun(longitude, latitude, 1, current_time);
   snprintf(sunset, sizeof("00:00"), "%02d:%02d",
 	   (int)temp_suncalc, (int)(60*(temp_suncalc-((int)(temp_suncalc)))));
   
@@ -370,6 +377,10 @@ static void init_data() {
   layer_set_update_proc(seconds_left, (LayerUpdateProc)update_secondLayers);
   layer_set_update_proc(seconds_right, (LayerUpdateProc)update_secondLayers);
   
+  longitude = persist_exists(GETLATITUDE) ? 
+			persist_read_int(GETLATITUDE)/1000000 : GPS_INVALID;
+  latitude = persist_exists(GETLONGITUDE) ? 
+			persist_read_int(GETLONGITUDE)/1000000 : GPS_INVALID;
   // first refresh
   handle_tick(current_time, MINUTE_UNIT);  
   setDate(current_time);
@@ -389,6 +400,9 @@ static void init_data() {
   app_message_register_inbox_received(inbox_received);
   app_message_open(app_message_inbox_size_maximum(),
 		   app_message_outbox_size_maximum());
+  
+  // refresh position
+  get_current_location();
 
 }
 
@@ -399,6 +413,8 @@ static void handle_window_unload(Window* window) {
   destroy_ui();
   // custom resources
   gbitmap_destroy(s_res_nobluetooth);
+  
+  app_message_deregister_callbacks();
 }
 
 void show_mainview(void) {

@@ -5,20 +5,26 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
    Tuple *lat_tuple = dict_find(iterator, GETLATITUDE);
    Tuple *long_tuple = dict_find(iterator, GETLONGITUDE);
    int changed = 0;
-
+   
+   //error case use old GPS location
+   if (lat_tuple->value->int32 == GPS_INVALID ||
+       long_tuple->value->int32 == GPS_INVALID)
+    return;
+   
    if (lat_tuple != 0 && long_tuple != 0) {
-         float latitude = lat_tuple->value->int32;
-         latitude /= 1000000;
-         float longitude = long_tuple->value->int32;
-         longitude /= 1000000;
+	 persist_write_int(GETLATITUDE, lat_tuple->value->int32);
+	 persist_write_int(GETLONGITUDE, long_tuple->value->int32);
+         float lat = lat_tuple->value->int32 / 1000000;
+         float lon = long_tuple->value->int32 / 1000000;
 
-         if (simple_fabs(real_longitude - longitude) > 0.001) {
-             real_longitude = longitude;
+	// APP_LOG(APP_LOG_LEVEL_DEBUG, "long: %d, lat:%d",(int)lon, (int)lat);
+         if (simple_fabs(longitude - lon) > 0.001) {
+             longitude = lon;
 	     changed = 1;
 	 }
 
-         if (simple_fabs(real_latitude - latitude) > 0.001) {
-             real_latitude = latitude;
+         if (simple_fabs(latitude - lat) > 0.001) {
+             latitude = lat;
 	     changed = 1;
 	}
    }
