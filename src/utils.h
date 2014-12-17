@@ -1,9 +1,19 @@
 #pragma once
 #include <pebble.h>
-#define LATITUDE 47.293373
-#define LONGITUDE  11.519552
+
 #define TIMEZONE  1.0
 #define GPS_INVALID 99999
+
+// Persistant storage information
+#define GETGPSCOORDINATES	0	// for request only
+#define GETLATITUDE		1	// KEY top get longitude data from dict 
+#define GETLONGITUDE		2	// KEY top get latitude data from dict 
+#define HIDESECONDS		3
+#define HIDESUNRISESET		4
+#define HIDESECONDSTIME		5
+#define LANGUAGE		6
+#define DATEFORMAT		7
+
 
 // custom globals
 static char* days[] = {"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};

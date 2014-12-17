@@ -1,6 +1,32 @@
 #include "communication.h"
 #include "simplemath.h"
 
+void get_current_location()
+{
+   bool returnvalue = true;
+   Tuplet tuple = TupletInteger(GETGPSCOORDINATES, 1);
+
+   DictionaryIterator *iterator;
+   AppMessageResult messageres;
+
+   messageres = app_message_outbox_begin(&iterator);
+   if (messageres != APP_MSG_OK || iterator == NULL) {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "app_message_outbox_begin failed");
+      return; 
+   }
+
+
+   DictionaryResult dictresult;
+
+   dict_write_tuplet(iterator, &tuple);
+   
+   unsigned writeret = dict_write_end(iterator);
+   if (writeret == 0)
+    return;
+
+   app_message_outbox_send(); 
+}
+
 void inbox_received(DictionaryIterator *iterator, void *context) {
    Tuple *lat_tuple = dict_find(iterator, GETLATITUDE);
    Tuple *long_tuple = dict_find(iterator, GETLONGITUDE);
@@ -33,3 +59,4 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
      forceSunUpdate = 1;
   
 }
+

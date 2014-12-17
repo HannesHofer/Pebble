@@ -1,4 +1,5 @@
 #include "communication.h"
+#include "config.h"
 
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
@@ -157,7 +158,6 @@ int forceSunUpdate = 0;
 float latitude = GPS_INVALID;
 float longitude = GPS_INVALID;
 static void update_suntime(struct tm *current_time);
-static void get_current_location();
 
 static void setDate(struct tm *current_time) {
   static char DateBuffer[] = "00/00/0000"; 
@@ -180,27 +180,31 @@ void handle_tick(struct tm *tick_time, TimeUnits units_changed)
 
 void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
 {
-  if (tick_time->tm_sec > 8 && tick_time->tm_sec < 24)
-    layer_mark_dirty(seconds_right);
-  else if (tick_time->tm_sec > 22 && tick_time->tm_sec < 38)
-    layer_mark_dirty(seconds_bottom);
-  else if (tick_time->tm_sec > 37 && tick_time->tm_sec < 53)
-    layer_mark_dirty(seconds_left);
-  else if (tick_time->tm_sec < 9 || tick_time->tm_sec > 52)
-     layer_mark_dirty(seconds_top);
-  
-  // update draw color
-  if (tick_time->tm_sec == 0)
-    drawcolor = not_drawcolor();
+  if (!hideseconds) {
+    if (tick_time->tm_sec > 8 && tick_time->tm_sec < 24)
+      layer_mark_dirty(seconds_right);
+    else if (tick_time->tm_sec > 22 && tick_time->tm_sec < 38)
+      layer_mark_dirty(seconds_bottom);
+    else if (tick_time->tm_sec > 37 && tick_time->tm_sec < 53)
+      layer_mark_dirty(seconds_left);
+    else if (tick_time->tm_sec < 9 || tick_time->tm_sec > 52)
+      layer_mark_dirty(seconds_top);
+    
+    // update draw color
+    if (tick_time->tm_sec == 0)
+      drawcolor = not_drawcolor();
+  }
     
   // minute update
   if (tick_time->tm_sec == 0)
     handle_tick(tick_time, MINUTE_UNIT);
   
-  // forced suncalc update 
-  if (forceSunUpdate){
-    update_suntime(tick_time);
-    forceSunUpdate = 0;
+  if (!hidesunriseset) {
+    // forced suncalc update 
+    if (forceSunUpdate){
+      update_suntime(tick_time);
+      forceSunUpdate = 0;
+    }
   }
 
 }
@@ -233,32 +237,6 @@ void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor,
       graphics_fill_rect(ctx, drawrect, 0, GCornerNone);   
     } 
   }
-}
-
-static void get_current_location()
-{
-   bool returnvalue = true;
-   Tuplet tuple = TupletInteger(GETGPSCOORDINATES, 1);
-
-   DictionaryIterator *iterator;
-   AppMessageResult messageres;
-
-   messageres = app_message_outbox_begin(&iterator);
-   if (messageres != APP_MSG_OK || iterator == NULL) {
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "app_message_outbox_begin failed");
-      return; 
-   }
-
-
-   DictionaryResult dictresult;
-
-   dict_write_tuplet(iterator, &tuple);
-   
-   unsigned writeret = dict_write_end(iterator);
-   if (writeret == 0)
-    return;
-
-   app_message_outbox_send(); 
 }
 
 static void update_suntime(struct tm *current_time)
@@ -353,8 +331,24 @@ void update_bat(Layer *l, GContext* ctx) {
     graphics_fill_rect(ctx, GRect(bat_level/10, 0, 10, 4), 0, GCornerNone);
 }
 
+static void updateUIforConfig()
+{
+    layer_set_hidden((Layer*)sunrise, !!hidesunriseset);
+    layer_set_hidden((Layer*)sunset, !!hidesunriseset);
+    layer_set_hidden((Layer*)sunrisetime, !!hidesunriseset);
+    layer_set_hidden((Layer*)sunsettime, !!hidesunriseset);  
+    
+    layer_set_hidden((Layer*)seconds_bottom, !!hideseconds);
+    layer_set_hidden((Layer*)seconds_top, !!hideseconds);
+    layer_set_hidden((Layer*)seconds_left, !!hideseconds);
+    layer_set_hidden((Layer*)seconds_right, !!hideseconds);
+}
 
 static void init_data() {
+  // load configuration
+  updateconfig();
+  updateUIforConfig();
+  
   time_t now = time(NULL);
   struct tm *current_time;// KEY top get longitude data from dict 
   current_time = localtime(&now);
@@ -396,13 +390,15 @@ static void init_data() {
   // custom resources
   s_res_nobluetooth = gbitmap_create_with_resource(RESOURCE_ID_nobluetooth); 
   
-  // init communication
-  app_message_register_inbox_received(inbox_received);
-  app_message_open(app_message_inbox_size_maximum(),
+   if (!hidesunriseset) {
+    // init communication
+    app_message_register_inbox_received(inbox_received);
+    app_message_open(app_message_inbox_size_maximum(),
 		   app_message_outbox_size_maximum());
   
-  // refresh position
-  get_current_location();
+    // refresh position
+    get_current_location();
+  }
 
 }
 
