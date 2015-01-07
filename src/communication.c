@@ -34,8 +34,10 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
    
    //error case use old GPS location
    if (lat_tuple->value->int32 == GPS_INVALID ||
-       long_tuple->value->int32 == GPS_INVALID)
-    return;
+       long_tuple->value->int32 == GPS_INVALID) {
+     update_sunrisesetimage(1);
+     return;
+   }
    
    if (lat_tuple != 0 && long_tuple != 0) {
 	 persist_write_int(GETLATITUDE, lat_tuple->value->int32);
@@ -43,7 +45,7 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
          float lat = lat_tuple->value->int32 / 1000000;
          float lon = long_tuple->value->int32 / 1000000;
 
-	// APP_LOG(APP_LOG_LEVEL_DEBUG, "long: %d, lat:%d",(int)lon, (int)lat);
+	 //APP_LOG(APP_LOG_LEVEL_DEBUG, "long: %ld, lat:%ld",long_tuple->value->int32, lat_tuple->value->int32);
          if (simple_fabs(longitude - lon) > 0.001) {
              longitude = lon;
 	     changed = 1;
@@ -53,6 +55,9 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
              latitude = lat;
 	     changed = 1;
 	}
+	
+	if (!changed)
+	  update_sunrisesetimage(0);
    }
    
    if (changed)

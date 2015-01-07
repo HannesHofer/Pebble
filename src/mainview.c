@@ -10,6 +10,8 @@ static GFont s_res_bitham_42_medium_numbers;
 static GFont s_res_gothic_18;
 static GBitmap *s_res_sunrise;
 static GBitmap *s_res_sunset;
+static GBitmap *s_res_sunrise_stored;
+static GBitmap *s_res_sunset_stored;
 static GFont s_res_gothic_14;
 static BitmapLayer *background;
 static BitmapLayer *bluetooth;
@@ -39,6 +41,8 @@ static void initialise_ui(void) {
   s_res_gothic_18 = fonts_get_system_font(FONT_KEY_GOTHIC_18);
   s_res_sunrise = gbitmap_create_with_resource(RESOURCE_ID_sunrise);
   s_res_sunset = gbitmap_create_with_resource(RESOURCE_ID_sunset);
+  s_res_sunrise_stored = gbitmap_create_with_resource(RESOURCE_ID_sunrise_stored);
+  s_res_sunset_stored = gbitmap_create_with_resource(RESOURCE_ID_sunset_stored);
   s_res_gothic_14 = fonts_get_system_font(FONT_KEY_GOTHIC_14);
   // background
   background = bitmap_layer_create(GRect(0, 0, 144, 168));
@@ -104,12 +108,12 @@ static void initialise_ui(void) {
   
   // sunrise
   sunrise = bitmap_layer_create(GRect(21, 136, 8, 13));
-  bitmap_layer_set_bitmap(sunrise, s_res_sunrise);
+  bitmap_layer_set_bitmap(sunrise, s_res_sunrise_stored);
   layer_add_child(window_get_root_layer(s_window), (Layer *)sunrise);
   
   // sunset
   sunset = bitmap_layer_create(GRect(87, 135, 8, 13));
-  bitmap_layer_set_bitmap(sunset, s_res_sunset);
+  bitmap_layer_set_bitmap(sunset, s_res_sunset_stored);
   layer_add_child(window_get_root_layer(s_window), (Layer *)sunset);
   
   // sunrisetime
@@ -203,6 +207,7 @@ void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
     // forced suncalc update 
     if (forceSunUpdate){
       update_suntime(tick_time);
+      update_sunrisesetimage(0);
       forceSunUpdate = 0;
     }
   }
@@ -236,6 +241,17 @@ void draw_rect(GContext* ctx, uint8_t from, uint8_t to, GColor mydrawcolor,
         drawrect = GRect(seconds_startdraw[i], 0, 3, 8);
       graphics_fill_rect(ctx, drawrect, 0, GCornerNone);   
     } 
+  }
+}
+
+void update_sunrisesetimage(uint8_t usestored)
+{
+  if (usestored) {
+    bitmap_layer_set_bitmap(sunrise, s_res_sunrise_stored);
+    bitmap_layer_set_bitmap(sunset, s_res_sunset_stored);
+  } else {
+    bitmap_layer_set_bitmap(sunrise, s_res_sunrise);
+    bitmap_layer_set_bitmap(sunset, s_res_sunset);
   }
 }
 
@@ -371,10 +387,11 @@ static void init_data() {
   layer_set_update_proc(seconds_left, (LayerUpdateProc)update_secondLayers);
   layer_set_update_proc(seconds_right, (LayerUpdateProc)update_secondLayers);
   
-  longitude = persist_exists(GETLATITUDE) ? 
-			GPS_INVALID :persist_read_int(GETLATITUDE)/1000000;
-  latitude = persist_exists(GETLONGITUDE) ? 
-			GPS_INVALID : persist_read_int(GETLONGITUDE)/1000000;
+  latitude = persist_exists(GETLATITUDE) ? 
+			persist_read_int(GETLATITUDE)/1000000 : GPS_INVALID;
+  longitude = persist_exists(GETLONGITUDE) ? 
+			persist_read_int(GETLONGITUDE)/1000000 : GPS_INVALID; 
+  
   // first refresh
   handle_tick(current_time, MINUTE_UNIT);  
   setDate(current_time);
