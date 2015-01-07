@@ -1,8 +1,8 @@
 {
     "appKeys": {
-    "getGPSCoordinates": 0,    
-    "latitude": 1,
-    "longitude": 2
+        "getGPSCoordinates": 0,
+        "latitude": 1,
+        "longitude": 2
     },
     "capabilities": [
         ""
@@ -13,23 +13,18 @@
     "resources": {
         "media": [
             {
-                "file": "images/sunset.png",
-                "name": "sunset",
+                "file": "images/sunset_stored.png",
+                "name": "sunset_stored",
                 "type": "png"
             },
             {
-                "file": "images/sunrise.png",
-                "name": "sunrise",
+                "file": "images/sunrise_stored.png",
+                "name": "sunrise_stored",
                 "type": "png"
             },
             {
-                "file": "images/pswecyl.png",
-                "name": "BAT_LOW",
-                "type": "png"
-            },
-            {
-                "file": "images/bluetooth.png",
-                "name": "bluetooth",
+                "file": "images/nobluetooth.png",
+                "name": "nobluetooth",
                 "type": "png"
             },
             {
@@ -38,8 +33,23 @@
                 "type": "png-trans"
             },
             {
-                "file": "images/nobluetooth.png",
-                "name": "nobluetooth",
+                "file": "images/bluetooth.png",
+                "name": "bluetooth",
+                "type": "png"
+            },
+            {
+                "file": "images/pswecyl.png",
+                "name": "BAT_LOW",
+                "type": "png"
+            },
+            {
+                "file": "images/sunrise.png",
+                "name": "sunrise",
+                "type": "png"
+            },
+            {
+                "file": "images/sunset.png",
+                "name": "sunset",
                 "type": "png"
             }
         ]
