@@ -372,9 +372,9 @@ static void init_data() {
   layer_set_update_proc(seconds_right, (LayerUpdateProc)update_secondLayers);
   
   longitude = persist_exists(GETLATITUDE) ? 
-			persist_read_int(GETLATITUDE)/1000000 : GPS_INVALID;
+			GPS_INVALID :persist_read_int(GETLATITUDE)/1000000;
   latitude = persist_exists(GETLONGITUDE) ? 
-			persist_read_int(GETLONGITUDE)/1000000 : GPS_INVALID;
+			GPS_INVALID : persist_read_int(GETLONGITUDE)/1000000;
   // first refresh
   handle_tick(current_time, MINUTE_UNIT);  
   setDate(current_time);
