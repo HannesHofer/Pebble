@@ -161,6 +161,7 @@ static void destroy_ui(void) {
 int forceSunUpdate = 0;
 float latitude = GPS_INVALID;
 float longitude = GPS_INVALID;
+static time_t accel_lastchange = 0;
 static void update_suntime(struct tm *current_time);
 
 static void setDate(struct tm *current_time) {
@@ -360,6 +361,33 @@ static void updateUIforConfig()
     layer_set_hidden((Layer*)seconds_right, !!hideseconds);
 }
 
+
+/* Note to the following code: 
+*  Aim is to detect if pebble was not moved and keep time since last movement
+*  This is a very simple solution and is error prone.
+*  No movement could be detected when there was a short movement between 
+*  measurements.
+*  For now this is acceptable since we would go in powersafe mode to early.
+*  But a simple minimal shake would wake us up.
+*
+*  This should be replaced with a better solution when avaiable 
+*/
+static void handle_acceldata(AccelData *data, uint32_t num_samples) { 
+  uint8_t i;
+  for (i = 1; i < num_samples; ++i) {
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "i: %d -- sample.x: %d, sample.y: %d, sample.z: %d", i, data[i].x, data[i].y, data[i].z);
+    if (abs(data[i].x - data[0].x) > 24 || 
+        abs(data[i].y - data[0].y) > 24 || 
+        abs(data[i].z - data[0].z) > (24*2)) {
+      accel_lastchange = time(NULL);
+    return;
+    }
+  }
+  
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "time nochange: %ld",time(NULL) - accel_lastchange);
+  
+}
+
 static void init_data() {
   // load configuration
   updateconfig();
@@ -400,6 +428,9 @@ static void init_data() {
   
   //register events
   bluetooth_connection_service_subscribe(handle_bluetooth);
+  accel_data_service_subscribe(15, handle_acceldata);
+  accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+  accel_lastchange = time(NULL);
   //tick_timer_service_subscribe(MINUTE_UNIT, (TickHandler) handle_tick);
   tick_timer_service_subscribe(SECOND_UNIT, (TickHandler) handle_seconds);
   battery_state_service_subscribe(handle_battery);
@@ -423,6 +454,7 @@ static void handle_window_unload(Window* window) {
   bluetooth_connection_service_unsubscribe();
   tick_timer_service_unsubscribe();
   battery_state_service_unsubscribe();
+  accel_data_service_unsubscribe();
   destroy_ui();
   // custom resources
   gbitmap_destroy(s_res_nobluetooth);
