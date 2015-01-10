@@ -162,6 +162,10 @@ int forceSunUpdate = 0;
 float latitude = GPS_INVALID;
 float longitude = GPS_INVALID;
 static time_t accel_lastchange = 0;
+static uint16_t noseconds_trigger = 5 * 60;
+static uint8_t temp_block = 0;
+static uint8_t block_immediatly = 0;
+
 static void update_suntime(struct tm *current_time);
 
 static void setDate(struct tm *current_time) {
@@ -185,7 +189,15 @@ void handle_tick(struct tm *tick_time, TimeUnits units_changed)
 
 void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
 {
-  if (!hideseconds) {
+  if (!hideseconds && !temp_block) {
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "time nochange: %ld",time(NULL) - accel_lastchange);
+    if ((time(NULL) - accel_lastchange) >= noseconds_trigger && 
+         ((tick_time->tm_sec == 0 && drawcolor == GColorWhite) ||
+         block_immediatly)) {
+      temp_block = 1;
+      accel_service_set_sampling_rate(ACCEL_SAMPLING_50HZ);
+    }
+    
     if (tick_time->tm_sec > 8 && tick_time->tm_sec < 24)
       layer_mark_dirty(seconds_right);
     else if (tick_time->tm_sec > 22 && tick_time->tm_sec < 38)
@@ -198,7 +210,9 @@ void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
     // update draw color
     if (tick_time->tm_sec == 0)
       drawcolor = not_drawcolor();
+    
   }
+    
     
   // minute update
   if (tick_time->tm_sec == 0)
@@ -278,6 +292,9 @@ static void update_suntime(struct tm *current_time)
 }
 
 void update_secondLayers(Layer *l, GContext* ctx) {
+  if (temp_block)
+    return;
+  
   time_t now = time(NULL);
   static struct tm *current_time;
   current_time = localtime(&now);
@@ -380,7 +397,15 @@ static void handle_acceldata(AccelData *data, uint32_t num_samples) {
         abs(data[i].y - data[0].y) > 24 || 
         abs(data[i].z - data[0].z) > (24*2)) {
       accel_lastchange = time(NULL);
-    return;
+      if (temp_block) {
+	temp_block = 0;
+	accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+	layer_mark_dirty(seconds_right);
+	layer_mark_dirty(seconds_bottom);
+	layer_mark_dirty(seconds_left);
+	layer_mark_dirty(seconds_top);
+      }
+      return;
     }
   }
   
