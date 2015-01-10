@@ -2,7 +2,7 @@
 
 var locationOptions = {
   enableHighAccuracy: false, 
-  maximumAge: 10000, 
+  maximumAge: 600000, 
   timeout: 60000
 };
 
