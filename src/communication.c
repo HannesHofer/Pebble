@@ -30,18 +30,23 @@ void get_current_location()
 void inbox_received(DictionaryIterator *iterator, void *context) {
    Tuple *lat_tuple = dict_find(iterator, GETLATITUDE);
    Tuple *long_tuple = dict_find(iterator, GETLONGITUDE);
+   Tuple *utcoffset_tuple = dict_find(iterator, GETUTCOFFSET);
    int changed = 0;
    
    //error case use old GPS location
    if (lat_tuple->value->int32 == GPS_INVALID ||
-       long_tuple->value->int32 == GPS_INVALID) {
+       long_tuple->value->int32 == GPS_INVALID ||
+       utcoffset_tuple->value->int32 == GPS_INVALID) {
      update_sunrisesetimage(1);
      return;
    }
    
-   if (lat_tuple != 0 && long_tuple != 0) {
+   if (lat_tuple != 0 && long_tuple != 0 && utcoffset != 0) {
 	 persist_write_int(GETLATITUDE, lat_tuple->value->int32);
 	 persist_write_int(GETLONGITUDE, long_tuple->value->int32);
+	 persist_write_int(GETUTCOFFSET, utcoffset_tuple->value->int32);
+	 utcoffset = utcoffset_tuple->value->int32;
+
          float lat = lat_tuple->value->int32 / 1000000;
          float lon = long_tuple->value->int32 / 1000000;
 

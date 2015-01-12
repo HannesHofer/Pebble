@@ -161,6 +161,7 @@ static void destroy_ui(void) {
 int forceSunUpdate = 0;
 float latitude = GPS_INVALID;
 float longitude = GPS_INVALID;
+int32_t utcoffset = GPS_INVALID;
 static time_t accel_lastchange = 0;
 static uint16_t noseconds_trigger = 5 * 60;
 static uint8_t temp_block = 0;
@@ -443,8 +444,9 @@ static void init_data() {
   latitude = persist_exists(GETLATITUDE) ? 
 			persist_read_int(GETLATITUDE)/1000000 : GPS_INVALID;
   longitude = persist_exists(GETLONGITUDE) ? 
-			persist_read_int(GETLONGITUDE)/1000000 : GPS_INVALID; 
-  
+			persist_read_int(GETLONGITUDE)/1000000 : GPS_INVALID;
+  utcoffset = persist_exists(GETUTCOFFSET) ?
+			persist_read_int(GETUTCOFFSET) : GPS_INVALID;
   // first refresh
   handle_tick(current_time, MINUTE_UNIT);  
   setDate(current_time);

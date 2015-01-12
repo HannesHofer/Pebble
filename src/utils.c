@@ -45,7 +45,7 @@ float convertlonghour(float longitude, int sunset, struct tm *current_time)
 
 void Timezone(float* time)
 {
-  *time += TIMEZONE;
+  *time += ((float)utcoffset)/60;
   if (*time > 24) *time -= 24;
   if (*time < 0) *time += 24;
 }

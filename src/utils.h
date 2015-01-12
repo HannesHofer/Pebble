@@ -6,13 +6,14 @@
 
 // Persistant storage information
 #define GETGPSCOORDINATES	0	// for request only
-#define GETLATITUDE		1	// KEY top get longitude data from dict 
-#define GETLONGITUDE		2	// KEY top get latitude data from dict 
-#define HIDESECONDS		3
-#define HIDESUNRISESET		4
-#define HIDESECONDSTIME		5
-#define LANGUAGE		6
-#define DATEFORMAT		7
+#define GETLATITUDE		1	// KEY to get longitude data from dict 
+#define GETLONGITUDE		2	// KEY to get latitude data from dict 
+#define GETUTCOFFSET		3	// KEY to get utcoffset data from dict
+#define HIDESECONDS		4
+#define HIDESUNRISESET		5
+#define HIDESECONDSTIME		6
+#define LANGUAGE		7
+#define DATEFORMAT		8
 
 
 // custom globals
@@ -40,4 +41,5 @@ float calcsun(float longitude, float latitude, int sunset, struct tm *current_ti
 
 extern float latitude;
 extern float longitude;
+extern int32_t utcoffset;
 extern int forceSunUpdate;
