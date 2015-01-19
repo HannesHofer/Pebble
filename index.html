@@ -1,1 +1,121 @@
-Hello World
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+    <title>Aurora Settings</title>
+  </head>
+
+  <body>
+        <div data-role="page" id="page1">
+      <div data-theme="" data-role="header">
+        <h3>Aurora Settings</h3>
+      </div>
+      <div data-role="content">
+         
+    <div class="ui-body ui-body-b">
+          <fieldset class="ui-grid-a">
+            <div class="ui-block-a"><button type="submit" data-theme="d" id="a-cancel">Cancel</button></div>
+            <div class="ui-block-b"><button type="submit" data-theme="b" id="a-submit">Save</button></div>
+          </fieldset>
+        </div>
+
+        <div data-role="fieldcontain">
+        <label for="language">Language</label>
+                <select name="language" id="language" data-theme="" data-role="selectmenu">
+                        <option value="1">English</option>
+                        <option value="2">German</option>
+                        <option value="3">Spanish</option>
+                     
+                </select>
+
+        <label for="dateformat">Date Format</label>
+                <select name="dateformat" id="dateformat" data-theme="" data-role="selectmenu">
+                        <option value="0">dd/mm/YYYY</option>
+                        <option value="1">mm/dd/YYYY</option>  
+                </select>
+        </div>
+
+        <div data-role="fieldcontain">
+    <fieldset data-role="controlgroup">
+        <legend>Style:</legend>
+                        <input type="radio" name="styleselect" id="newstyle" value="0" />
+                        <label for="newstyle"><img src="images/newstyle.png" alt="New Style" width="72" height="84"> <img src="images/newstyle2.png" alt="New Style 2" width="72" height="84"></label>
+
+                        <input type="radio" name="styleselect" id="newstyle-forwards" value="4" />
+                        <label for="newstyle-forwards"><img src="images/newstyle.png" alt="New Style" width="72" height="84"></label>
+
+                        <input type="radio" name="styleselect" id="v2style" value="1" />
+                        <label for="v2style"><img src="images/v2style.png" alt="V2 Style" width="72" height="84"></label>
+
+                        <input type="radio" name="styleselect" id="backstyle" value="2" />
+                        <label for="backstyle"><img src="images/v2style.png" alt="V2 Style" width="72" height="84"> <img src="images/backwardstyle.png" alt="Backwards Style" width="72" height="84"></label>
+
+                        <input type="radio" name="styleselect" id="noseconds" value="3" />
+                        <label for="noseconds"><img src="images/noseconds.png" alt="No Seconds Style" width="72" height="84"></label>    
+    </fieldset>
+        </div>
+        <label for="nomovementlabel">disable seconds after X seconds </label>
+        <select name="momovement" id="nomovement" data-theme="" data-role="selectmenu">
+                <option value="1">do not disable</option>
+                <option value="2">30 seconds</option>
+                <option value="3">1 Minute</option>
+                <option value="4">2 Minutes</option>  
+                <option value="5">5 Minutes</option>
+                <option value="6">10 Minutes</option>
+                <option value="7">15 Minutes</option>
+                <option value="8">30 Minutes</option>
+                <option value="9">45 Minutes</option>
+                <option value="10">1 hour</option>
+        </select>
+
+        <div data-role="fieldcontain">
+          <label for="day">show seconds</label>
+          <select name="showseconds" id="showseconds" data-theme="b" data-role="slider">
+            <option value="1">Off</option>
+            <option value="0">On</option>
+          </select>
+          <br><br>
+      <label for="date">show sunrise / sunset</label>
+          <select name="sunrise" id="sunrise" data-theme="b" data-role="slider">
+            <option value="1">Off</option>
+            <option value="0">On</option>
+          </select>
+          <br><br>
+          <label for="bluetooth">show bluetooth connection icon</label>
+            <select name="bluetooth" id="bluetooth" data-theme="b" data-role="slider">
+            <option value="0">Off</option>
+            <option value="1">On</option>
+          </select>
+          <br><br>
+          <label for="bat">show battery icon</label>
+          <select name="bat" id="bat" data-theme="b" data-role="slider">
+            <option value="0">Off</option>
+            <option value="1">On</option>
+          </select>
+          <br><br>
+         
+
+    <div class="ui-body ui-body-b">
+          <fieldset class="ui-grid-a">
+            <div class="ui-block-a"><button type="submit" data-theme="d" id="b-cancel">Cancel</button></div>
+            <div class="ui-block-b"><button type="submit" data-theme="b" id="b-submit">Save</button></div>
+          </fieldset>
+        </div>
+
+        <br>
+      </div>
+    </div>
+    
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-46042684-1', 'perkel.co.za');
+                ga('send', 'pageview');
+        </script>
+  </body>
+</html>
