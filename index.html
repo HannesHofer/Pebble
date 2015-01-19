@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
@@ -14,14 +15,14 @@
         <h3>Aurora Settings</h3>
       </div>
       <div data-role="content">
-         
+      <!-- no need for button on top at the moment    
     <div class="ui-body ui-body-b">
           <fieldset class="ui-grid-a">
             <div class="ui-block-a"><button type="submit" data-theme="d" id="a-cancel">Cancel</button></div>
             <div class="ui-block-b"><button type="submit" data-theme="b" id="a-submit">Save</button></div>
           </fieldset>
         </div>
-
+-->
         <div data-role="fieldcontain">
         <label for="language">Language</label>
                 <select name="language" id="language" data-theme="" data-role="selectmenu">
@@ -72,25 +73,25 @@
         </select>
 
         <div data-role="fieldcontain">
-          <label for="day">show seconds</label>
+          <label for="day">show seconds</label><br>
           <select name="showseconds" id="showseconds" data-theme="b" data-role="slider">
             <option value="1">Off</option>
             <option value="0">On</option>
           </select>
           <br><br>
-      <label for="date">show sunrise / sunset</label>
+      <label for="date">show sunrise / sunset</label><br>
           <select name="sunrise" id="sunrise" data-theme="b" data-role="slider">
             <option value="1">Off</option>
             <option value="0">On</option>
           </select>
           <br><br>
-          <label for="bluetooth">show bluetooth connection icon</label>
+          <label for="bluetooth">show bluetooth connection icon</label><br>
             <select name="bluetooth" id="bluetooth" data-theme="b" data-role="slider">
             <option value="0">Off</option>
             <option value="1">On</option>
           </select>
           <br><br>
-          <label for="bat">show battery icon</label>
+          <label for="bat">show battery icon</label><br>
           <select name="bat" id="bat" data-theme="b" data-role="slider">
             <option value="0">Off</option>
             <option value="1">On</option>
@@ -108,14 +109,5 @@
         <br>
       </div>
     </div>
-    
-                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-                ga('create', 'UA-46042684-1', 'perkel.co.za');
-                ga('send', 'pageview');
-        </script>
   </body>
 </html>
