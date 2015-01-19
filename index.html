@@ -38,27 +38,37 @@
                         <option value="1">mm/dd/YYYY</option>  
                 </select>
         </div>
-
+	<!--
         <div data-role="fieldcontain">
-    <fieldset data-role="controlgroup">
-        <legend>Style:</legend>
-                        <input type="radio" name="styleselect" id="newstyle" value="0" />
-                        <label for="newstyle"><img src="images/newstyle.png" alt="New Style" width="72" height="84"> <img src="images/newstyle2.png" alt="New Style 2" width="72" height="84"></label>
+	  <fieldset data-role="controlgroup">
+	      <legend>Style:</legend>
+			      <input type="radio" name="styleselect" id="newstyle" value="0" />
+			      <label for="newstyle"><img src="images/newstyle.png" alt="New Style" width="72" height="84"> <img src="images/newstyle2.png" alt="New Style 2" width="72" height="84"></label>
 
-                        <input type="radio" name="styleselect" id="newstyle-forwards" value="4" />
-                        <label for="newstyle-forwards"><img src="images/newstyle.png" alt="New Style" width="72" height="84"></label>
+			      <input type="radio" name="styleselect" id="newstyle-forwards" value="4" />
+			      <label for="newstyle-forwards"><img src="images/newstyle.png" alt="New Style" width="72" height="84"></label>
 
-                        <input type="radio" name="styleselect" id="v2style" value="1" />
-                        <label for="v2style"><img src="images/v2style.png" alt="V2 Style" width="72" height="84"></label>
+			      <input type="radio" name="styleselect" id="v2style" value="1" />
+			      <label for="v2style"><img src="images/v2style.png" alt="V2 Style" width="72" height="84"></label>
 
-                        <input type="radio" name="styleselect" id="backstyle" value="2" />
-                        <label for="backstyle"><img src="images/v2style.png" alt="V2 Style" width="72" height="84"> <img src="images/backwardstyle.png" alt="Backwards Style" width="72" height="84"></label>
+			      <input type="radio" name="styleselect" id="backstyle" value="2" />
+			      <label for="backstyle"><img src="images/v2style.png" alt="V2 Style" width="72" height="84"> <img src="images/backwardstyle.png" alt="Backwards Style" width="72" height="84"></label>
 
-                        <input type="radio" name="styleselect" id="noseconds" value="3" />
-                        <label for="noseconds"><img src="images/noseconds.png" alt="No Seconds Style" width="72" height="84"></label>    
-    </fieldset>
+			      <input type="radio" name="styleselect" id="noseconds" value="3" />
+			      <label for="noseconds"><img src="images/noseconds.png" alt="No Seconds Style" width="72" height="84"></label>    
+	  </fieldset>
         </div>
-        <label for="nomovementlabel">disable seconds after X seconds </label>
+        -->
+        
+        <div data-role="fieldcontain">
+          <label for="day">show seconds</label><br>
+          <select name="showseconds" id="showseconds" data-theme="b" data-role="slider">
+            <option value="1">Off</option>
+            <option value="0">On</option>
+          </select>
+          <br><br>
+          
+        <label for="nomovementlabel">disable seconds after X seconds </label><br>
         <select name="momovement" id="nomovement" data-theme="" data-role="selectmenu">
                 <option value="1">do not disable</option>
                 <option value="2">30 seconds</option>
@@ -71,21 +81,16 @@
                 <option value="9">45 Minutes</option>
                 <option value="10">1 hour</option>
         </select>
+        <br><br>
 
-        <div data-role="fieldcontain">
-          <label for="day">show seconds</label><br>
-          <select name="showseconds" id="showseconds" data-theme="b" data-role="slider">
-            <option value="1">Off</option>
-            <option value="0">On</option>
-          </select>
-          <br><br>
+
       <label for="date">show sunrise / sunset</label><br>
           <select name="sunrise" id="sunrise" data-theme="b" data-role="slider">
             <option value="1">Off</option>
             <option value="0">On</option>
           </select>
           <br><br>
-          <label for="bluetooth">show bluetooth connection icon</label><br>
+          <label for="bluetooth">show bluetooth icon</label><br>
             <select name="bluetooth" id="bluetooth" data-theme="b" data-role="slider">
             <option value="0">Off</option>
             <option value="1">On</option>
