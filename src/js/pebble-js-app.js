@@ -6,6 +6,14 @@ var locationOptions = {
   timeout: 60000
 };
 
+var savedOptions = {
+  'language': 2,
+  'dateformat': 1,
+  'showseconds': 1,
+  'nomovement': 300,
+  'sunrise': 1,
+  'bluetooth': 1,
+  'bat': 1 };
 
 function locationSuccess(pos) {
   // sendAppMessage converts values to uin32_t therefore convert to int
@@ -38,3 +46,24 @@ Pebble.addEventListener('ready',
     navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
   }
 );
+
+
+///////////////// configuration ///////////////
+Pebble.addEventListener("showConfiguration", function() {
+ // var val = window.localStorage.getItem("gibsnit");
+  Pebble.openURL('http://hanneshofer.github.io/Pebble/?'+encodeURIComponent(JSON.stringify(savedOptions)));
+
+  
+});
+
+Pebble.addEventListener("webviewclosed", function(e) {
+  console.log("configuration closed");
+  // webview closed
+  //Using primitive JSON validity and non-empty check
+  if (e.response.charAt(0) == "{" && e.response.slice(-1) == "}" && e.response.length > 5) {
+  options = JSON.parse(decodeURIComponent(e.response));
+  console.log("Options = " + JSON.stringify(options));
+  } else {
+  console.log("Cancelled");
+  }
+});

@@ -6,7 +6,7 @@
         "utcoffset": 3
     },
     "capabilities": [
-        ""
+        "configurable"
     ],
     "companyName": "hannes.hofer+pebble@gmail.com",
     "longName": "aurora",
