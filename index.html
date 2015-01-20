@@ -15,14 +15,7 @@
         <h3>Aurora Settings</h3>
       </div>
       <div data-role="content">
-      <!-- no need for button on top at the moment    
-    <div class="ui-body ui-body-b">
-          <fieldset class="ui-grid-a">
-            <div class="ui-block-a"><button type="submit" data-theme="d" id="a-cancel">Cancel</button></div>
-            <div class="ui-block-b"><button type="submit" data-theme="b" id="a-submit">Save</button></div>
-          </fieldset>
-        </div>
--->
+
         <div data-role="fieldcontain">
         <label for="language">Language</label>
                 <select name="language" id="language" data-theme="" data-role="selectmenu">
@@ -38,27 +31,6 @@
                         <option value="1">mm/dd/YYYY</option>  
                 </select>
         </div>
-	<!--
-        <div data-role="fieldcontain">
-	  <fieldset data-role="controlgroup">
-	      <legend>Style:</legend>
-			      <input type="radio" name="styleselect" id="newstyle" value="0" />
-			      <label for="newstyle"><img src="images/newstyle.png" alt="New Style" width="72" height="84"> <img src="images/newstyle2.png" alt="New Style 2" width="72" height="84"></label>
-
-			      <input type="radio" name="styleselect" id="newstyle-forwards" value="4" />
-			      <label for="newstyle-forwards"><img src="images/newstyle.png" alt="New Style" width="72" height="84"></label>
-
-			      <input type="radio" name="styleselect" id="v2style" value="1" />
-			      <label for="v2style"><img src="images/v2style.png" alt="V2 Style" width="72" height="84"></label>
-
-			      <input type="radio" name="styleselect" id="backstyle" value="2" />
-			      <label for="backstyle"><img src="images/v2style.png" alt="V2 Style" width="72" height="84"> <img src="images/backwardstyle.png" alt="Backwards Style" width="72" height="84"></label>
-
-			      <input type="radio" name="styleselect" id="noseconds" value="3" />
-			      <label for="noseconds"><img src="images/noseconds.png" alt="No Seconds Style" width="72" height="84"></label>    
-	  </fieldset>
-        </div>
-        -->
         
         <div data-role="fieldcontain">
           <label for="day">show seconds</label><br>
@@ -111,5 +83,34 @@
         </div>
       </div>
     </div>
+    <script>
+    function saveOptions() {
+        var options = {
+          'language': $("#language").val(),
+          'dateformat': $("#dateformat").val(),
+          'schowseconds': $("#showseconds").val(),
+          'nomovement': $("#nomovement").val(),
+          'sunrise': $("#sunrise").val(),
+          'bluetooth': $("#bluetooth").val(),
+          'bat': $("#bat"),          
+        }
+        return options;
+      }
+      
+      $().ready(function() {
+	  $("#a-cancel").click(function() {
+	    console.log("Cancel");
+	    document.location = "pebblejs://close#";
+	  });
+
+        $("#a-submit").click(function() {
+          console.log("Submit");
+          var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+          console.log(location);
+          document.location = location;
+        });
+      });
+      
+    </script>
   </body>
 </html>
