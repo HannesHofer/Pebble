@@ -77,8 +77,8 @@
 
     <div class="ui-body ui-body-b">
           <fieldset class="ui-grid-a">
-            <div class="ui-block-a"><button type="submit" data-theme="d" id="b-cancel">Cancel</button></div>
-            <div class="ui-block-b"><button type="submit" data-theme="b" id="b-submit">Save</button></div>
+            <div class="ui-block-a"><button type="submit" data-theme="d" id="cancel">Cancel</button></div>
+            <div class="ui-block-b"><button type="submit" data-theme="b" id="submit">Save</button></div>
           </fieldset>
         </div>
       </div>
@@ -98,12 +98,12 @@
       }
       
       $().ready(function() {
-	  $("#a-cancel").click(function() {
+	  $("#cancel").click(function() {
 	    console.log("Cancel");
 	    document.location = "pebblejs://close#";
 	  });
 
-        $("#a-submit").click(function() {
+        $("#submit").click(function() {
           console.log("Submit");
           var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
           console.log(location);
