@@ -27,38 +27,38 @@
 
         <label for="dateformat">Date Format</label>
                 <select name="dateformat" id="dateformat" data-theme="" data-role="selectmenu">
-                        <option value="0">dd/mm/YYYY</option>
-                        <option value="1">mm/dd/YYYY</option>  
+                        <option value="1">dd/mm/YYYY</option>
+                        <option value="2">mm/dd/YYYY</option>  
                 </select>
         </div>
         
         <div data-role="fieldcontain">
           <label for="day">show seconds</label><br>
           <select name="showseconds" id="showseconds" data-theme="b" data-role="slider">
-            <option value="1">Off</option>
-            <option value="0">On</option>
+            <option value="0">Off</option>
+            <option value="1">On</option>
           </select>
           <br><br>
           
         <label for="nomovementlabel">disable seconds after X seconds </label><br>
         <select name="momovement" id="nomovement" data-theme="" data-role="selectmenu">
-                <option value="1">do not disable</option>
-                <option value="2">30 seconds</option>
-                <option value="3">1 Minute</option>
-                <option value="4">2 Minutes</option>  
-                <option value="5">5 Minutes</option>
-                <option value="6">10 Minutes</option>
-                <option value="7">15 Minutes</option>
-                <option value="8">30 Minutes</option>
-                <option value="9">45 Minutes</option>
-                <option value="10">1 hour</option>
+                <option value="-1">do not disable</option>
+                <option value="30">30 seconds</option>
+                <option value="60">1 Minute</option>
+                <option value="120">2 Minutes</option>  
+                <option value="300">5 Minutes</option>
+                <option value="600">10 Minutes</option>
+                <option value="900">15 Minutes</option>
+                <option value="1800">30 Minutes</option>
+                <option value="2700">45 Minutes</option>
+                <option value="">1 hour</option>
         </select>
         <br>
 
       <label for="date">show sunrise / sunset icon</label><br>
           <select name="sunrise" id="sunrise" data-theme="b" data-role="slider">
-            <option value="1">Off</option>
-            <option value="0">On</option>
+            <option value="0">Off</option>
+            <option value="1">On</option>
           </select>
           <br><br>
           <label for="bluetooth">show bluetooth icon</label>
@@ -78,38 +78,43 @@
     <div class="ui-body ui-body-b">
           <fieldset class="ui-grid-a">
             <div class="ui-block-a"><button type="submit" data-theme="d" id="cancel">Cancel</button></div>
-            <div class="ui-block-b"><button type="submit" data-theme="b" id="submit">Save</button></div>
+            <div class="ui-block-b"><button type="submit" data-theme="b" id="save">Save</button></div>
           </fieldset>
         </div>
       </div>
     </div>
     <script>
-    function saveOptions() {
-        var options = {
-          'language': $("#language").val(),
-          'dateformat': $("#dateformat").val(),
-          'schowseconds': $("#showseconds").val(),
-          'nomovement': $("#nomovement").val(),
-          'sunrise': $("#sunrise").val(),
-          'bluetooth': $("#bluetooth").val(),
-          'bat': $("#bat"),          
-        }
+      function saveOptions() {
+        var options = {}
+        //Add all textual values
+        $('textarea, select, [type="hidden"], [type="password"], [type="text"]').each(function(){options[$(this).attr('id')] = $(this).val();})
+        //Add all checkbox type values
+        $('[type="radio"], [type="checkbox"]').each(function(){options[$(this).attr('id')] = $(this).is(':checked');})
         return options;
       }
-      
-      $().ready(function() {
-	  $("#cancel").click(function() {
-	    console.log("Cancel");
-	    document.location = "pebblejs://close#";
-	  });
 
-        $("#submit").click(function() {
-          console.log("Submit");
+      $().ready(function() {
+        $("#cancel").click(function() {
+          document.location = "pebblejs://close";
+        });
+
+        $("#save").click(function() {
           var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
-          console.log(location);
           document.location = location;
         });
+
+        //Set form values to whatever is passed in.
+        var obj = jQuery.parseJSON(decodeURIComponent(window.location.search.substring(1)));
+        for(key in obj) {
+          var element = $("#"+[key]);
+          if (element.data('role') == "slider")
+	    element.val(obj[key]).slider().slider("refresh");
+	  else if (element.data('role') == "selectmenu")
+	    element.val(obj[key]).selectmenu().selectmenu("refresh");
+        }
       });
+
+   
       
     </script>
   </body>
