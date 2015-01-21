@@ -159,13 +159,23 @@ static void destroy_ui(void) {
 // END AUTO-GENERATED UI CODE
 
 int forceSunUpdate = 0;
-float latitude = GPS_INVALID;
-float longitude = GPS_INVALID;
-int32_t utcoffset = GPS_INVALID;
+
 static time_t accel_lastchange = 0;
-static uint16_t noseconds_trigger = 5 * 60;
 static uint8_t temp_block = 0;
 static uint8_t block_immediatly = 0;
+
+
+float latitude;
+float longitude;
+int32_t utcoffset;
+uint16_t noseconds_trigger;
+uint8_t language;
+uint8_t dateformat;
+uint8_t showseconds;
+uint8_t showsunrise;
+uint8_t showbat;
+uint8_t showbluetooth;
+
 
 static void update_suntime(struct tm *current_time);
 
@@ -190,7 +200,7 @@ void handle_tick(struct tm *tick_time, TimeUnits units_changed)
 
 void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
 {
-  if (!hideseconds && !temp_block) {
+  if (showseconds && !temp_block) {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "time nochange: %ld",time(NULL) - accel_lastchange);
     if ((time(NULL) - accel_lastchange) >= noseconds_trigger && 
          ((tick_time->tm_sec == 0 && drawcolor == GColorWhite) ||
@@ -219,7 +229,7 @@ void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
   if (tick_time->tm_sec == 0)
     handle_tick(tick_time, MINUTE_UNIT);
   
-  if (!hidesunriseset) {
+  if (showsunrise) {
     // forced suncalc update 
     if (forceSunUpdate){
       update_suntime(tick_time);
@@ -368,15 +378,15 @@ void update_bat(Layer *l, GContext* ctx) {
 
 static void updateUIforConfig()
 {
-    layer_set_hidden((Layer*)sunrise, !!hidesunriseset);
-    layer_set_hidden((Layer*)sunset, !!hidesunriseset);
-    layer_set_hidden((Layer*)sunrisetime, !!hidesunriseset);
-    layer_set_hidden((Layer*)sunsettime, !!hidesunriseset);  
+    layer_set_hidden((Layer*)sunrise, !showsunrise);
+    layer_set_hidden((Layer*)sunset, !showsunrise);
+    layer_set_hidden((Layer*)sunrisetime, !showsunrise);
+    layer_set_hidden((Layer*)sunsettime, !showsunrise);  
     
-    layer_set_hidden((Layer*)seconds_bottom, !!hideseconds);
-    layer_set_hidden((Layer*)seconds_top, !!hideseconds);
-    layer_set_hidden((Layer*)seconds_left, !!hideseconds);
-    layer_set_hidden((Layer*)seconds_right, !!hideseconds);
+    layer_set_hidden((Layer*)seconds_bottom, !showseconds);
+    layer_set_hidden((Layer*)seconds_top, !showseconds);
+    layer_set_hidden((Layer*)seconds_left, !showseconds);
+    layer_set_hidden((Layer*)seconds_right, !showseconds);
 }
 
 
@@ -441,12 +451,6 @@ static void init_data() {
   layer_set_update_proc(seconds_left, (LayerUpdateProc)update_secondLayers);
   layer_set_update_proc(seconds_right, (LayerUpdateProc)update_secondLayers);
   
-  latitude = persist_exists(GETLATITUDE) ? 
-			persist_read_int(GETLATITUDE)/1000000 : GPS_INVALID;
-  longitude = persist_exists(GETLONGITUDE) ? 
-			persist_read_int(GETLONGITUDE)/1000000 : GPS_INVALID;
-  utcoffset = persist_exists(GETUTCOFFSET) ?
-			persist_read_int(GETUTCOFFSET) : GPS_INVALID;
   // first refresh
   handle_tick(current_time, MINUTE_UNIT);  
   setDate(current_time);
@@ -465,7 +469,7 @@ static void init_data() {
   // custom resources
   s_res_nobluetooth = gbitmap_create_with_resource(RESOURCE_ID_nobluetooth); 
   
-   if (!hidesunriseset) {
+   if (showsunrise) {
     // init communication
     app_message_register_inbox_received(inbox_received);
     app_message_open(app_message_inbox_size_maximum(),

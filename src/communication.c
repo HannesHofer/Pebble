@@ -3,7 +3,6 @@
 
 void get_current_location()
 {
-   bool returnvalue = true;
    Tuplet tuple = TupletInteger(GETGPSCOORDINATES, 1);
 
    DictionaryIterator *iterator;
@@ -15,8 +14,6 @@ void get_current_location()
       return; 
    }
 
-
-   DictionaryResult dictresult;
 
    dict_write_tuplet(iterator, &tuple);
    
@@ -31,6 +28,11 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
    Tuple *lat_tuple = dict_find(iterator, GETLATITUDE);
    Tuple *long_tuple = dict_find(iterator, GETLONGITUDE);
    Tuple *utcoffset_tuple = dict_find(iterator, GETUTCOFFSET);
+   
+   Tuple *test = dict_find(iterator, 4);
+   if (test != 0)
+     APP_LOG(APP_LOG_LEVEL_DEBUG, "diogane: %ld", test->value->int32);
+     
    int changed = 0;
    
    //error case use old GPS location

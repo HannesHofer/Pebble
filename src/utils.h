@@ -9,11 +9,13 @@
 #define GETLATITUDE		1	// KEY to get longitude data from dict 
 #define GETLONGITUDE		2	// KEY to get latitude data from dict 
 #define GETUTCOFFSET		3	// KEY to get utcoffset data from dict
-#define HIDESECONDS		4
-#define HIDESUNRISESET		5
-#define HIDESECONDSTIME		6
+#define SHOWSECONDS		4
+#define SHOWSUNRISE		5
+#define HIDESECONDS		6
 #define LANGUAGE		7
 #define DATEFORMAT		8
+#define SHOWBATTERY		9
+#define SHOWBLUETOOTH		10
 
 
 // custom globals
@@ -43,3 +45,10 @@ extern float latitude;
 extern float longitude;
 extern int32_t utcoffset;
 extern int forceSunUpdate;
+extern uint8_t showseconds;
+extern uint8_t showsunrise;
+extern uint8_t language;
+extern uint8_t dateformat;
+extern uint16_t noseconds_trigger;
+extern uint8_t showbat;
+extern uint8_t showbluetooth;

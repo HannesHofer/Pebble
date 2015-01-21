@@ -6,15 +6,6 @@ var locationOptions = {
   timeout: 60000
 };
 
-var savedOptions = {
-  'language': 2,
-  'dateformat': 1,
-  'showseconds': 1,
-  'nomovement': 300,
-  'sunrise': 1,
-  'bluetooth': 1,
-  'bat': 1 };
-
 function locationSuccess(pos) {
   // sendAppMessage converts values to uin32_t therefore convert to int
   var coordinates = pos.coords;
@@ -50,10 +41,20 @@ Pebble.addEventListener('ready',
 
 ///////////////// configuration ///////////////
 Pebble.addEventListener("showConfiguration", function() {
- // var val = window.localStorage.getItem("gibsnit");
-  Pebble.openURL('http://hanneshofer.github.io/Pebble/?'+encodeURIComponent(JSON.stringify(savedOptions)));
-
-  
+  var settings = window.localStorage.getItem("settings");
+  if (settings == null) {
+    settings = {
+      'showseconds': 1,
+      'sunrise': 1,
+      'nomovement': 300,
+      'language': 2,
+      'dateformat': 1,
+      'bat': 1, 
+      'bluetooth': 1};
+    settings = JSON.stringify(settings);
+  }
+  console.log("settings:" + settings);
+  Pebble.openURL('http://hanneshofer.github.io/Pebble/?'+encodeURIComponent(settings));
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
@@ -61,8 +62,10 @@ Pebble.addEventListener("webviewclosed", function(e) {
   // webview closed
   //Using primitive JSON validity and non-empty check
   if (e.response.charAt(0) == "{" && e.response.slice(-1) == "}" && e.response.length > 5) {
-  options = JSON.parse(decodeURIComponent(e.response));
-  console.log("Options = " + JSON.stringify(options));
+  var settings = JSON.parse(decodeURIComponent(e.response));
+  window.localStorage.setItem("settings", JSON.stringify(settings));
+  Pebble.sendAppMessage(settings);
+  console.log("Options = " + JSON.stringify(settings));
   } else {
   console.log("Cancelled");
   }
