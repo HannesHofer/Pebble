@@ -4,7 +4,13 @@
         "latitude": 1,
         "longitude": 2,
         "utcoffset": 3,
-        "showseconds": 4
+        "showseconds": 4,
+        "sunrise": 5,
+        "nomovement": 6,
+        "language": 7,
+        "dateformat": 8,
+        "bat": 9, 
+        "bluetooth": 10
     },
     "capabilities": [
         "configurable"

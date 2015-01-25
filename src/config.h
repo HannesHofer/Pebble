@@ -11,3 +11,4 @@
 #define CONFIG_DEFAULT_SHOWBATTERY		1
 
 void updateconfig();
+void updateUIforConfig();

@@ -1,5 +1,6 @@
 #include "communication.h"
 #include "simplemath.h"
+#include "config.h"
 
 void get_current_location()
 {
@@ -24,15 +25,58 @@ void get_current_location()
    app_message_outbox_send(); 
 }
 
+void GPSrefresh(DictionaryIterator *iterator);
+void settings(DictionaryIterator *iterator);
+
+
 void inbox_received(DictionaryIterator *iterator, void *context) {
+   APP_LOG(APP_LOG_LEVEL_DEBUG,"diogane diogane");
+   Tuple *isconfiguration = dict_find(iterator, SHOWSECONDS);
+   if (isconfiguration)
+     settings(iterator);    
+   else
+     GPSrefresh(iterator);  
+}
+
+void settings(DictionaryIterator* iterator)
+{
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "settings");
+    Tuple *showseconds = dict_find(iterator, SHOWSECONDS);
+    Tuple *sunrise = dict_find(iterator, SHOWSUNRISE);
+    Tuple *nomovement = dict_find(iterator, HIDESECONDS);
+    Tuple *language = dict_find(iterator, LANGUAGE);
+    Tuple *dateformat = dict_find(iterator, DATEFORMAT);
+    Tuple *bat = dict_find(iterator, SHOWBATTERY);
+    Tuple *bluetooth = dict_find(iterator, SHOWBLUETOOTH);
+
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"showseconds: %s", showseconds->value->cstring);
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"sunrise: %s", sunrise->value->cstring);
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"nomovement: %s", nomovement->value->cstring);
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"language: %s", language->value->cstring);
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"dateformat: %s", dateformat->value->cstring);
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"bat: %s", bat->value->cstring);
+    APP_LOG(APP_LOG_LEVEL_DEBUG,"bluetooth: %s", bluetooth->value->cstring);
+    
+    persist_write_int(SHOWSECONDS, atoi(showseconds->value->cstring));
+    persist_write_int(SHOWSUNRISE, atoi(sunrise->value->cstring));
+    persist_write_int(SHOWBATTERY, atoi(bat->value->cstring));
+    persist_write_int(SHOWBLUETOOTH, atoi(bluetooth->value->cstring));
+    persist_write_int(HIDESECONDS, atoi(nomovement->value->cstring));
+    persist_write_int(LANGUAGE, atoi(language->value->cstring));
+    persist_write_int(DATEFORMAT, atoi(dateformat->value->cstring));
+    
+    updateconfig();
+    updateUIforConfig();
+    
+}
+
+
+void GPSrefresh(DictionaryIterator *iterator) {
+   APP_LOG(APP_LOG_LEVEL_DEBUG, "GPSrefresh");
    Tuple *lat_tuple = dict_find(iterator, GETLATITUDE);
    Tuple *long_tuple = dict_find(iterator, GETLONGITUDE);
    Tuple *utcoffset_tuple = dict_find(iterator, GETUTCOFFSET);
    
-   Tuple *test = dict_find(iterator, 4);
-   if (test != 0)
-     APP_LOG(APP_LOG_LEVEL_DEBUG, "diogane: %ld", test->value->int32);
-     
    int changed = 0;
    
    //error case use old GPS location
@@ -52,7 +96,6 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
          float lat = lat_tuple->value->int32 / 1000000;
          float lon = long_tuple->value->int32 / 1000000;
 
-	 //APP_LOG(APP_LOG_LEVEL_DEBUG, "long: %ld, lat:%ld",long_tuple->value->int32, lat_tuple->value->int32);
          if (simple_fabs(longitude - lon) > 0.001) {
              longitude = lon;
 	     changed = 1;
@@ -69,6 +112,4 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
    
    if (changed)
      forceSunUpdate = 1;
-  
 }
-

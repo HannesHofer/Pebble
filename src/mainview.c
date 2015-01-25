@@ -356,7 +356,7 @@ void update_secondLayers(Layer *l, GContext* ctx) {
 }
 
 void handle_bluetooth(bool connected) {
-  if (connected)
+  if (connected && showbluetooth)
     bitmap_layer_set_bitmap(bluetooth, s_res_bluetooth);
   else {
     bitmap_layer_set_bitmap(bluetooth, s_res_nobluetooth);
@@ -369,15 +369,21 @@ void handle_battery(BatteryChargeState chargestate) {
 }
 
 void update_bat(Layer *l, GContext* ctx) {
+  if (showbat) {
     graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_fill_rect(ctx, GRect(0, 0, bat_level/10, 4), 0, GCornerNone);
   
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, GRect(bat_level/10, 0, 10, 4), 0, GCornerNone);
+  } else {
+    bitmap_layer_set_bitmap(Battery, s_res_nobluetooth);
+  }
+  
 }
 
-static void updateUIforConfig()
+void updateUIforConfig()
 {
+  
     layer_set_hidden((Layer*)sunrise, !showsunrise);
     layer_set_hidden((Layer*)sunset, !showsunrise);
     layer_set_hidden((Layer*)sunrisetime, !showsunrise);
@@ -469,12 +475,12 @@ static void init_data() {
   // custom resources
   s_res_nobluetooth = gbitmap_create_with_resource(RESOURCE_ID_nobluetooth); 
   
-   if (showsunrise) {
-    // init communication
-    app_message_register_inbox_received(inbox_received);
-    app_message_open(app_message_inbox_size_maximum(),
+  // init communication
+  app_message_register_inbox_received(inbox_received);
+  app_message_open(app_message_inbox_size_maximum(),
 		   app_message_outbox_size_maximum());
-  
+    
+   if (showsunrise) { 
     // refresh position
     get_current_location();
   }
