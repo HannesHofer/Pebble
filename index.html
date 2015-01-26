@@ -15,13 +15,19 @@
         <h3>Aurora Settings</h3>
       </div>
       <div data-role="content">
+      <div class="ui-body ui-body-b">
+          <fieldset class="ui-grid-a">
+            <div class="ui-block-a"><button type="submit" data-theme="d" id="cancelTop">Cancel</button></div>
+            <div class="ui-block-b"><button type="submit" data-theme="b" id="saveTop">Save</button></div>
+          </fieldset>
+        </div>
 
         <div data-role="fieldcontain">
         <label for="language">Language</label>
                 <select name="language" id="language" data-theme="" data-role="selectmenu">
                         <option value="1">English</option>
-                        <option value="2">German</option>
-                        <option value="3">Spanish</option>
+                        <option value="2">Deutsch</option>
+                        <option value="3">Italiano</option>
                      
                 </select>
 
@@ -54,6 +60,12 @@
                 <option value="">1 hour</option>
         </select>
         <br>
+        <label for="gracefulstop">Graceful stop of seconds update</label><br>
+          <select name="gracefulstop" id="gracefulstop" data-theme="b" data-role="slider">
+            <option value="0">Off</option>
+            <option value="1">On</option>
+          </select>
+          <br><br>
 
       <label for="date">show sunrise / sunset icon</label><br>
           <select name="sunrise" id="sunrise" data-theme="b" data-role="slider">
@@ -77,8 +89,8 @@
 
     <div class="ui-body ui-body-b">
           <fieldset class="ui-grid-a">
-            <div class="ui-block-a"><button type="submit" data-theme="d" id="cancel">Cancel</button></div>
-            <div class="ui-block-b"><button type="submit" data-theme="b" id="save">Save</button></div>
+            <div class="ui-block-a"><button type="submit" data-theme="d" id="cancelBottom">Cancel</button></div>
+            <div class="ui-block-b"><button type="submit" data-theme="b" id="saveBottom">Save</button></div>
           </fieldset>
         </div>
       </div>
@@ -94,11 +106,19 @@
       }
 
       $().ready(function() {
-        $("#cancel").click(function() {
+        $("#cancelTop").click(function() {
           document.location = "pebblejs://close";
         });
 
-        $("#save").click(function() {
+        $("#saveTop").click(function() {
+          var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+          document.location = location;
+        });
+        $("#cancelBottom").click(function() {
+          document.location = "pebblejs://close";
+        });
+
+        $("#saveBottom").click(function() {
           var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
           document.location = location;
         });
