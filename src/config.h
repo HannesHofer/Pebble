@@ -9,6 +9,7 @@
 #define CONFIG_DEFAULT_DATEFORMAT		1
 #define CONFIG_DEFAULT_SHOWBLUETOOTH		1
 #define CONFIG_DEFAULT_SHOWBATTERY		1
+#define CONFIG_DEFAULT_GRACEFULSTOP		1
 
 void updateconfig();
 void updateUIforConfig();

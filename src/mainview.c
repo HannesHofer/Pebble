@@ -168,21 +168,25 @@ static uint8_t block_immediatly = 0;
 float latitude;
 float longitude;
 int32_t utcoffset;
-uint16_t noseconds_trigger;
+int16_t noseconds_trigger;
 uint8_t language;
 uint8_t dateformat;
 uint8_t showseconds;
 uint8_t showsunrise;
 uint8_t showbat;
 uint8_t showbluetooth;
-
+uint8_t gracefulstop;
+char** days = gdays;
 
 static void update_suntime(struct tm *current_time);
 
 static void setDate(struct tm *current_time) {
   static char DateBuffer[] = "00/00/0000"; 
   text_layer_set_text(Day, days[current_time->tm_wday]);
-  strftime(DateBuffer, sizeof("00/00/0000"), "%d/%m/%Y", current_time);
+  if (dateformat == 1)
+    strftime(DateBuffer, sizeof("00/00/0000"), "%d/%m/%Y", current_time);
+  else if (dateformat == 2)
+    strftime(DateBuffer, sizeof("00/00/0000"), "%m/%d/%Y", current_time);
   text_layer_set_text(actDate, DateBuffer);
   
   update_suntime(current_time);
@@ -203,6 +207,7 @@ void handle_seconds(struct tm *tick_time, TimeUnits units_changed)
   if (showseconds && !temp_block) {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "time nochange: %ld",time(NULL) - accel_lastchange);
     if ((time(NULL) - accel_lastchange) >= noseconds_trigger && 
+        noseconds_trigger > 0 &&
          ((tick_time->tm_sec == 0 && drawcolor == GColorWhite) ||
          block_immediatly)) {
       temp_block = 1;
@@ -370,6 +375,7 @@ void handle_battery(BatteryChargeState chargestate) {
 
 void update_bat(Layer *l, GContext* ctx) {
   if (showbat) {
+    bitmap_layer_set_bitmap(Battery, s_res_bat_low);
     graphics_context_set_fill_color(ctx, GColorWhite);
     graphics_fill_rect(ctx, GRect(0, 0, bat_level/10, 4), 0, GCornerNone);
   
@@ -393,6 +399,16 @@ void updateUIforConfig()
     layer_set_hidden((Layer*)seconds_top, !showseconds);
     layer_set_hidden((Layer*)seconds_left, !showseconds);
     layer_set_hidden((Layer*)seconds_right, !showseconds);
+    
+    handle_bluetooth(bluetooth_connection_service_peek());
+    handle_battery(battery_state_service_peek());
+    
+    block_immediatly = !gracefulstop;
+    
+    time_t now = time(NULL);
+    struct tm *current_time;
+    current_time = localtime(&now);
+    setDate(current_time);
 }
 
 
@@ -459,10 +475,7 @@ static void init_data() {
   
   // first refresh
   handle_tick(current_time, MINUTE_UNIT);  
-  setDate(current_time);
-  handle_bluetooth(bluetooth_connection_service_peek());
-  handle_battery(battery_state_service_peek());
-  
+
   //register events
   bluetooth_connection_service_subscribe(handle_bluetooth);
   accel_data_service_subscribe(15, handle_acceldata);

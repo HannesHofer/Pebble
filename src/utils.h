@@ -16,10 +16,13 @@
 #define DATEFORMAT		8
 #define SHOWBATTERY		9
 #define SHOWBLUETOOTH		10
+#define GRACEFULSTOP		11
 
 
 // custom globals
-static char* days[] = {"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
+static char* gdays[] = {"Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"};
+static char* edays[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+static char* idays[] = {"Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato"};
 static uint8_t bat_level = 0;
 static GBitmap *s_res_nobluetooth;
 static GColor drawcolor = GColorBlack;
@@ -49,6 +52,8 @@ extern uint8_t showseconds;
 extern uint8_t showsunrise;
 extern uint8_t language;
 extern uint8_t dateformat;
-extern uint16_t noseconds_trigger;
+extern int16_t noseconds_trigger;
 extern uint8_t showbat;
 extern uint8_t showbluetooth;
+extern uint8_t gracefulstop;
+extern char** days;
