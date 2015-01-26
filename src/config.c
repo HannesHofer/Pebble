@@ -20,9 +20,6 @@ void updateconfig()
   noseconds_trigger = persist_exists(HIDESECONDS) ? 
 		persist_read_int(HIDESECONDS) : CONFIG_DEFAULT_HIDESECONDS;
 
-  language = persist_exists(LANGUAGE) ? 
-		persist_read_int(LANGUAGE) : CONFIG_DEFAULT_LANGUAGE;
-
   dateformat = persist_exists(DATEFORMAT) ? 
 		persist_read_int(DATEFORMAT) : CONFIG_DEFAULT_DATEFORMAT;
 		
@@ -32,4 +29,22 @@ void updateconfig()
 			persist_read_int(GETLONGITUDE)/1000000 : GPS_INVALID;
   utcoffset = persist_exists(GETUTCOFFSET) ?
 			persist_read_int(GETUTCOFFSET) : GPS_INVALID;
+  language = persist_exists(LANGUAGE) ? 
+		persist_read_int(LANGUAGE) : CONFIG_DEFAULT_LANGUAGE;
+  gracefulstop = persist_exists(GRACEFULSTOP) ? 
+		persist_read_int(GRACEFULSTOP) : CONFIG_DEFAULT_GRACEFULSTOP;
+  
+  switch(language) {
+    case 1:
+      days = edays;
+      break;
+    case 2:
+      days = gdays;
+      break;
+    case 3:
+      days = idays;
+      break;
+    default:
+      days =  gdays;
+  }
 }
