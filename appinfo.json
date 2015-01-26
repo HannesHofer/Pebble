@@ -10,7 +10,8 @@
         "language": 7,
         "dateformat": 8,
         "bat": 9, 
-        "bluetooth": 10
+        "bluetooth": 10,
+        "gracefulstop": 11
     },
     "capabilities": [
         "configurable"
