@@ -11,7 +11,7 @@ void get_current_location()
 
    messageres = app_message_outbox_begin(&iterator);
    if (messageres != APP_MSG_OK || iterator == NULL) {
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "app_message_outbox_begin failed");
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "app_message_outbox_begin failed");
       return; 
    }
 
@@ -30,7 +30,6 @@ void settings(DictionaryIterator *iterator);
 
 
 void inbox_received(DictionaryIterator *iterator, void *context) {
-   APP_LOG(APP_LOG_LEVEL_DEBUG,"diogane diogane");
    Tuple *isconfiguration = dict_find(iterator, SHOWSECONDS);
    if (isconfiguration)
      settings(iterator);    
@@ -40,7 +39,6 @@ void inbox_received(DictionaryIterator *iterator, void *context) {
 
 void settings(DictionaryIterator* iterator)
 {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "settings");
     Tuple *showseconds = dict_find(iterator, SHOWSECONDS);
     Tuple *sunrise = dict_find(iterator, SHOWSUNRISE);
     Tuple *nomovement = dict_find(iterator, HIDESECONDS);
@@ -48,15 +46,8 @@ void settings(DictionaryIterator* iterator)
     Tuple *dateformat = dict_find(iterator, DATEFORMAT);
     Tuple *bat = dict_find(iterator, SHOWBATTERY);
     Tuple *bluetooth = dict_find(iterator, SHOWBLUETOOTH);
-
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"showseconds: %s", showseconds->value->cstring);
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"sunrise: %s", sunrise->value->cstring);
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"nomovement: %s", nomovement->value->cstring);
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"language: %s", language->value->cstring);
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"dateformat: %s", dateformat->value->cstring);
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"bat: %s", bat->value->cstring);
-    APP_LOG(APP_LOG_LEVEL_DEBUG,"bluetooth: %s", bluetooth->value->cstring);
-    
+    Tuple *graceful = dict_find(iterator, GRACEFULSTOP);
+   
     persist_write_int(SHOWSECONDS, atoi(showseconds->value->cstring));
     persist_write_int(SHOWSUNRISE, atoi(sunrise->value->cstring));
     persist_write_int(SHOWBATTERY, atoi(bat->value->cstring));
@@ -64,6 +55,7 @@ void settings(DictionaryIterator* iterator)
     persist_write_int(HIDESECONDS, atoi(nomovement->value->cstring));
     persist_write_int(LANGUAGE, atoi(language->value->cstring));
     persist_write_int(DATEFORMAT, atoi(dateformat->value->cstring));
+    persist_write_int(GRACEFULSTOP, atoi(graceful->value->cstring));
     
     updateconfig();
     updateUIforConfig();
@@ -72,7 +64,7 @@ void settings(DictionaryIterator* iterator)
 
 
 void GPSrefresh(DictionaryIterator *iterator) {
-   APP_LOG(APP_LOG_LEVEL_DEBUG, "GPSrefresh");
+   //APP_LOG(APP_LOG_LEVEL_DEBUG, "GPSrefresh");
    Tuple *lat_tuple = dict_find(iterator, GETLATITUDE);
    Tuple *long_tuple = dict_find(iterator, GETLONGITUDE);
    Tuple *utcoffset_tuple = dict_find(iterator, GETUTCOFFSET);
