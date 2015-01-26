@@ -50,7 +50,8 @@ Pebble.addEventListener("showConfiguration", function() {
       'language': 2,
       'dateformat': 1,
       'bat': 1, 
-      'bluetooth': 1};
+      'bluetooth': 1,
+      'gracefulstop': 1};
     settings = JSON.stringify(settings);
   }
   console.log("settings:" + settings);
