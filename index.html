@@ -45,7 +45,7 @@
             <option value="1">On</option>
           </select>
           <br><br>
-          <div data-role="fieldcontain" id="rectanglediv" style="display: none;">
+          <div data-role="fieldcontain" id="rectanglediv" >
           <label for="day">show rectangles</label><br>
           <select name="showrectangle" id="showrectangle" data-theme="b" data-role="slider" default="1">
             <option value="0">Off</option>
@@ -129,13 +129,6 @@
           var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
           document.location = location;
         });
-
-	$( "#showseconds" ).on('change', function() {
-	    if ($( "#showseconds" ).val() == 0) 
-	      $( "#rectanglediv").show();
-	    else
-	      $( "#rectanglediv").hide();
-	});
 	
         //Set form values to whatever is passed in.
         var obj = jQuery.parseJSON(decodeURIComponent(window.location.search.substring(1)));
@@ -147,8 +140,6 @@
 	    element.val(obj[key]).selectmenu().selectmenu("refresh");
         }
         
-        if ($( "#showseconds" ).val() == 0) 
-	  $( "#rectanglediv").show();
       });
       
     </script>
