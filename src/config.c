@@ -33,6 +33,8 @@ void updateconfig()
 		persist_read_int(LANGUAGE) : CONFIG_DEFAULT_LANGUAGE;
   gracefulstop = persist_exists(GRACEFULSTOP) ? 
 		persist_read_int(GRACEFULSTOP) : CONFIG_DEFAULT_GRACEFULSTOP;
+  showrectangle = persist_exists(SHOWRECTANGLE) ? 
+		persist_read_int(SHOWRECTANGLE) : CONFIG_DEFAULT_SHOWRECTANGLE;
   
   switch(language) {
     case 1:

@@ -11,7 +11,8 @@
         "dateformat": 8,
         "bat": 9, 
         "bluetooth": 10,
-        "gracefulstop": 11
+        "gracefulstop": 11,
+        "showrectangle": 12
     },
     "capabilities": [
         "configurable"
@@ -65,8 +66,8 @@
     },
     "shortName": "aurora",
     "uuid": "69c89a13-c89e-4722-a5ab-7026e4bf9bdc",
-    "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionCode": 2,
+    "versionLabel": "1.1",
     "watchapp": {
         "watchface": true
     }

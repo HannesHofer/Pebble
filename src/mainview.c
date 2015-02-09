@@ -176,6 +176,7 @@ uint8_t showsunrise;
 uint8_t showbat;
 uint8_t showbluetooth;
 uint8_t gracefulstop;
+uint8_t showrectangle;
 char** days = gdays;
 
 static void update_suntime(struct tm *current_time);
@@ -399,6 +400,8 @@ void updateUIforConfig()
     layer_set_hidden((Layer*)seconds_top, !showseconds);
     layer_set_hidden((Layer*)seconds_left, !showseconds);
     layer_set_hidden((Layer*)seconds_right, !showseconds);
+    
+    layer_set_hidden((Layer*)background, !showrectangle);
     
     handle_bluetooth(bluetooth_connection_service_peek());
     handle_battery(battery_state_service_peek());

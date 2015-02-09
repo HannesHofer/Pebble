@@ -17,6 +17,7 @@
 #define SHOWBATTERY		9
 #define SHOWBLUETOOTH		10
 #define GRACEFULSTOP		11
+#define SHOWRECTANGLE		12
 
 
 // custom globals
@@ -56,4 +57,5 @@ extern int16_t noseconds_trigger;
 extern uint8_t showbat;
 extern uint8_t showbluetooth;
 extern uint8_t gracefulstop;
+extern uint8_t showrectangle;
 extern char** days;

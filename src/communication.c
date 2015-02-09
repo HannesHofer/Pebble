@@ -47,6 +47,7 @@ void settings(DictionaryIterator* iterator)
     Tuple *bat = dict_find(iterator, SHOWBATTERY);
     Tuple *bluetooth = dict_find(iterator, SHOWBLUETOOTH);
     Tuple *graceful = dict_find(iterator, GRACEFULSTOP);
+    Tuple *rectangle = dict_find(iterator, SHOWRECTANGLE);
    
     persist_write_int(SHOWSECONDS, atoi(showseconds->value->cstring));
     persist_write_int(SHOWSUNRISE, atoi(sunrise->value->cstring));
@@ -56,6 +57,7 @@ void settings(DictionaryIterator* iterator)
     persist_write_int(LANGUAGE, atoi(language->value->cstring));
     persist_write_int(DATEFORMAT, atoi(dateformat->value->cstring));
     persist_write_int(GRACEFULSTOP, atoi(graceful->value->cstring));
+    persist_write_int(SHOWRECTANGLE, atoi(rectangle->value->cstring));
     
     updateconfig();
     updateUIforConfig();
