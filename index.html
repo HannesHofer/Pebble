@@ -129,7 +129,7 @@
           var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
           document.location = location;
         });
-        
+
 	$( "#showseconds" ).on('change', function() {
 	    if ($( "#showseconds" ).val() == 0) 
 	      $( "#rectanglediv").show();
@@ -147,6 +147,9 @@
 	    element.val(obj[key]).selectmenu().selectmenu("refresh");
         }
       });
+      
+      if ($( "#showseconds" ).val() == 0) 
+	      $( "#rectanglediv").show();
       
     </script>
   </body>
